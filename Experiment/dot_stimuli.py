@@ -5,6 +5,8 @@ Created on Tue May  5 11:20:31 2020
 @author: juliu
 """
 import random
+import numpy as np
+
 
 # Define Experimental parameter
 frames = 60
@@ -17,6 +19,44 @@ dot_speed = 5
 print(coh_dot)
 a = 0
 
+class RDM_kinematogram(object):
+    """ Functions to implement a random dot kinematogram in Psychopy. Two 
+    algorithms are implemented. The Movshon-Newsome algorithm and the Brownian-Motion
+    algorithm for randomly moving dots with different coherence levels. For a 
+    more thorough overview of advantages and disadvantages see Pilly and Seitz
+    2009"""
+    def __init__(self, alg='MN', dot_speed = 5):
+        """ Initialize with algorithm choice """
+        if alg == 'MN':
+            # Movshon Newsome
+            self.rdm_alg = 'MN'
+        elif alg == 'BM':
+            self.rdm_alg = 'BM'
+        else:
+            raise ValueError('The RDM algorithm you requested does not exist. '
+                             'Please specify either "MN" for the Movshon-Newsome '
+                             'algorithm, or "BM" for the Brownian motion algorithm'
+                    )
+        self.speed = dot_speed
+        
+    def create_dots(self, dot_num):
+        dot_num = 180
+        # first we create three sequences by creating a three dimensional array
+        ind = np.arange(0,dot_num,1).reshape(3,dot_num//3)
+        # randomly assign indexes to sequence
+        np.random.shuffle(ind)
+        
+        # Then we set the coordinates for all dots (one array x, the other y)
+        dot_cart = np.array([np.random.randint(-200,200, 200), 
+                      np.random.randint(-200,200, 180)])
+        
+        return dot_cart, ind
+        
+    def update_dots(self, frame, coherence):
+        frame = 17
+        # determine which sequence is updated
+        frame%3
+        
 
 for frame in range(frames):
     for dot in range(n_dots):
