@@ -8,7 +8,7 @@ Created on Tue May  5 11:20:31 2020
 %reset
 import random
 import numpy as np
-
+import dot_stimuli
 
 class RDM_kinematogram(object):
     """ Functions to implement a random dot kinematogram in Psychopy. Two 
