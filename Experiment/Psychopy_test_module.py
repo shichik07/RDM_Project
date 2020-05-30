@@ -132,21 +132,10 @@ class RDM_kinematogram(object):
         return rand_loc
 
 
+#
+dot_parameter = RDM_kinematogram()
+coord= dot_parameter.create_dots()
 
-dot_parameter = RDM_kinematogram(direction='right')
-coordinates = dot_parameter.create_dots()
-
-
-
-frames = 120
-n_dots = 180
-coherence = 0.4
-dot_xys = []
-dot_speed= 5
-dot_size = 10
-
-
-# create window and stimuli and text elements
 win = visual.Window(
     size=[400,400],
     units="pix",
@@ -178,21 +167,68 @@ text_4 = visual.TextStim(win=win,
     flipHoriz=False #if you ever need mirrored writing set this True
 )
 
+
+frames = 120
+n_dots = 100
+trgt_size = 10 # size of the group of coherently moving dots
+dot_xys = []
+dot_speed= 5
+dot_size = 10
+
+# index of random dots
+coh_dot = random.sample(range(n_dots),  trgt_size) 
+
+# to keep track of time
+clock = core.Clock()
+
+for dot in range(n_dots):
+    dot_x = random.uniform(-200,200)
+    dot_y = random.uniform(-200,200)
+    dot_xys.append([dot_x,dot_y])
+
+
 dot_stim = visual.ElementArrayStim(
     win=win,
     units="pix",
     nElements=n_dots,
     elementTex=None,
     elementMask="circle",
-    xys=coordinates.list,
+    xys=dot_xys,
     sizes=dot_size
 )
-clock = core.Clock()
-#clock.reset()
 
+clock.reset()
+
+dot_xys = []
 for frame in range(frames):
-    coordinates = dot_parameter.create_dots()
-    dot_stim.xys = coordinates.list
+    
+    for dot in range(n_dots):
+        if frame == 0: # randomly assign initial position
+            dot_x = random.uniform(-200,200)
+            dot_y = random.uniform(-200,200)
+            dot_xys.append([dot_x,dot_y])
+        else:
+            if coh_dot.count(dot) == 1: # determine if dot is in target group via count function
+                if dot_xys[dot][0] + dot_speed < 200: # if the dot is still within the window
+                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed
+                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+                else: # if the dot would move beyond
+                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed - 400
+                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+            else: # update the remaining dots
+                dot_xys[dot][0] = dot_xys[dot][0] + random.randint(-dot_speed, dot_speed)
+                dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+                if dot_xys[dot][0] > 200:
+                    dot_xys[dot][0] = dot_xys[dot][0] - 400
+                elif dot_xys[dot][0] < -200:
+                    dot_xys[dot][0] = dot_xys[dot][0] + 400
+                elif dot_xys[dot][1] > 200:
+                    dot_xys[dot][1] = dot_xys[dot][1] - 400
+                elif dot_xys[dot][1] < -200:
+                    dot_xys[dot][1] = dot_xys[dot][1] + 400
+                else:
+                    pass
+    dot_stim.xys = dot_xys
     dot_stim.draw()
     win.flip()
 
@@ -200,71 +236,10 @@ for frame in range(frames):
 print(clock.getTime()) 
 
 
-
-# index of random dots
-#coh_dot = random.sample(range(n_dots),  trgt_size) 
-#
-# to keep track of time
-#clock = core.Clock()
-#
-#for dot in range(n_dots):
-#    dot_x = random.uniform(-200,200)
-#    dot_y = random.uniform(-200,200)
-#    dot_xys.append([dot_x,dot_y])
-#
-#
-#dot_stim = visual.ElementArrayStim(
-#    win=win,
-#    units="pix",
-#    nElements=n_dots,
-#    elementTex=None,
-#    elementMask="circle",
-#    xys=dot_xys,
-#    sizes=dot_size
-#)
-#
-#clock.reset()
-#
-#dot_xys = []
-#for frame in range(frames):
-#    
-#    for dot in range(n_dots):
-#        if frame == 0: # randomly assign initial position
-#            dot_x = random.uniform(-200,200)
-#            dot_y = random.uniform(-200,200)
-#            dot_xys.append([dot_x,dot_y])
-#        else:
-#            if coh_dot.count(dot) == 1: # determine if dot is in target group via count function
-#                if dot_xys[dot][0] + dot_speed < 200: # if the dot is still within the window
-#                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed
-#                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-#                else: # if the dot would move beyond
-#                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed - 400
-#                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-#            else: # update the remaining dots
-#                dot_xys[dot][0] = dot_xys[dot][0] + random.randint(-dot_speed, dot_speed)
-#                dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-#                if dot_xys[dot][0] > 200:
-#                    dot_xys[dot][0] = dot_xys[dot][0] - 400
-#                elif dot_xys[dot][0] < -200:
-#                    dot_xys[dot][0] = dot_xys[dot][0] + 400
-#                elif dot_xys[dot][1] > 200:
-#                    dot_xys[dot][1] = dot_xys[dot][1] - 400
-#                elif dot_xys[dot][1] < -200:
-#                    dot_xys[dot][1] = dot_xys[dot][1] + 400
-#                else:
-#                    pass
-#    dot_stim.xys = dot_xys
-#    dot_stim.draw()
-#    win.flip()
-#
-#
-#print(clock.getTime()) 
-
-
 event.waitKeys()
 
 win.close()
+
 
 
 #
