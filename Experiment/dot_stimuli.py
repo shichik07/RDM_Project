@@ -8,7 +8,7 @@ Created on Tue May  5 11:20:31 2020
 %reset
 import random
 import numpy as np
-import dot_stimuli
+
 
 class RDM_kinematogram(object):
     """ Functions to implement a random dot kinematogram in Psychopy. Two 
@@ -46,35 +46,39 @@ class RDM_kinematogram(object):
         # randomly assign indexes to sequence
         np.random.shuffle(self.ind)
         # Then we set the coordinates for all dots (one array x, the other y)
-        dot_cart = np.array([self.randomize_coord(self.n_dot), 
+        self.dot_cart = np.array([self.randomize_coord(self.n_dot), 
                       self.randomize_coord(self.n_dot)])
-        return dot_cart
+        # noticed the input format for psychopy are lists are pairwise lists
+        out_list = self.dot_cart.T
+        return out_list.tolist()
     
         
-    def update_dots(self, dot_cart, frame):
+    def update_dots(self, frame):
         # indexes of coherently moving dots
         coh_ind = np.random.choice(self.ind[[frame%3],...].flat, 
                                    self.num_coh, replace = False)
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
-        dot_cart[1,coh_ind] +=  self.speed*self.direct 
+        self.dot_cart[1,coh_ind] +=  self.speed*self.direct 
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        if any(np.abs(dot_cart[1,coh_ind]) > self.dim):
+        if any(np.abs(self.dot_cart[1,coh_ind]) > self.dim):
             # find the relevant items outside 
-            redraw = np.abs(dot_cart[1,coh_ind]) > self.dim
+            redraw = np.abs(self.dot_cart[1,coh_ind]) > self.dim
             redraw = coh_ind[redraw]
             # randomize x and y coordinates for the abarrant coherent dots
-            dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
+            self.dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
                     self.randomize_coord(redraw.size)])
         # update the noise dots and if exist the redraw coordinates
         noise = np.isin(self.ind[[frame%3],...], coh_ind, invert=True)
         noise = self.ind[[frame%3],noise.flat]
          # randomize x and y coordinates for the noise dots
-        dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
+        self.dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
                     self.randomize_coord(noise.size)])
-        return dot_cart
+        # noticed the input format for psychopy are lists are pairwise lists
+        out_list = self.dot_cart.T
+        return  out_list.tolist()
     
     
     def randomize_coord(self, x):
@@ -96,17 +100,10 @@ x = RDM_kinematogram(direction='right')
 some_pos = x.randomize_coord(20)
 position = x.create_dots()
 print(position)
-position2 = x.update_dots(position, 3)
+for i in range(120):
+    position2 = x.update_dots(i)
 print(position2)
 
-position == position2
-
-
-
- a = np.arange(10)
- print(a)
- any(a > 5) = 0
- print(a)
 
 
 """

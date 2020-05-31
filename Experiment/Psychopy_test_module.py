@@ -91,35 +91,39 @@ class RDM_kinematogram(object):
         # randomly assign indexes to sequence
         np.random.shuffle(self.ind)
         # Then we set the coordinates for all dots (one array x, the other y)
-        dot_cart = np.array([self.randomize_coord(self.n_dot), 
+        self.dot_cart = np.array([self.randomize_coord(self.n_dot), 
                       self.randomize_coord(self.n_dot)])
-        return dot_cart
+        # noticed the input format for psychopy are lists are pairwise lists
+        out_list = self.dot_cart.T
+        return out_list.tolist()
     
         
-    def update_dots(self, dot_cart, frame):
+    def update_dots(self, frame):
         # indexes of coherently moving dots
         coh_ind = np.random.choice(self.ind[[frame%3],...].flat, 
                                    self.num_coh, replace = False)
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
-        dot_cart[1,coh_ind] +=  self.speed*self.direct 
+        self.dot_cart[1,coh_ind] +=  self.speed*self.direct 
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        if any(np.abs(dot_cart[1,coh_ind]) > self.dim):
+        if any(np.abs(self.dot_cart[1,coh_ind]) > self.dim):
             # find the relevant items outside 
-            redraw = np.abs(dot_cart[1,coh_ind]) > self.dim
+            redraw = np.abs(self.dot_cart[1,coh_ind]) > self.dim
             redraw = coh_ind[redraw]
             # randomize x and y coordinates for the abarrant coherent dots
-            dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
+            self.dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
                     self.randomize_coord(redraw.size)])
         # update the noise dots and if exist the redraw coordinates
         noise = np.isin(self.ind[[frame%3],...], coh_ind, invert=True)
         noise = self.ind[[frame%3],noise.flat]
          # randomize x and y coordinates for the noise dots
-        dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
+        self.dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
                     self.randomize_coord(noise.size)])
-        return dot_cart
+        # noticed the input format for psychopy are lists are pairwise lists
+        out_list = self.dot_cart.T
+        return  out_list.tolist()
     
     
     def randomize_coord(self, x):
@@ -131,10 +135,6 @@ class RDM_kinematogram(object):
         rand_loc = np.random.randint(-self.dim, self.dim, x)
         return rand_loc
 
-
-#
-dot_parameter = RDM_kinematogram()
-coord= dot_parameter.create_dots()
 
 win = visual.Window(
     size=[400,400],
@@ -168,15 +168,20 @@ text_4 = visual.TextStim(win=win,
 )
 
 
-frames = 120
-n_dots = 100
-trgt_size = 10 # size of the group of coherently moving dots
+#
+dot_parameter = RDM_kinematogram()
+coord= dot_parameter.create_dots()
+
+frames = 1200
+n_dots = 180
+trgt_size = 40 # size of the group of coherently moving dots
 dot_xys = []
 dot_speed= 5
 dot_size = 10
 
 # index of random dots
 coh_dot = random.sample(range(n_dots),  trgt_size) 
+
 
 # to keep track of time
 clock = core.Clock()
@@ -193,44 +198,53 @@ dot_stim = visual.ElementArrayStim(
     nElements=n_dots,
     elementTex=None,
     elementMask="circle",
-    xys=dot_xys,
+    xys=coord,
     sizes=dot_size
 )
+#    xys=dot_xys,
+
+
 
 clock.reset()
 
-dot_xys = []
 for frame in range(frames):
-    
-    for dot in range(n_dots):
-        if frame == 0: # randomly assign initial position
-            dot_x = random.uniform(-200,200)
-            dot_y = random.uniform(-200,200)
-            dot_xys.append([dot_x,dot_y])
-        else:
-            if coh_dot.count(dot) == 1: # determine if dot is in target group via count function
-                if dot_xys[dot][0] + dot_speed < 200: # if the dot is still within the window
-                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed
-                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-                else: # if the dot would move beyond
-                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed - 400
-                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-            else: # update the remaining dots
-                dot_xys[dot][0] = dot_xys[dot][0] + random.randint(-dot_speed, dot_speed)
-                dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
-                if dot_xys[dot][0] > 200:
-                    dot_xys[dot][0] = dot_xys[dot][0] - 400
-                elif dot_xys[dot][0] < -200:
-                    dot_xys[dot][0] = dot_xys[dot][0] + 400
-                elif dot_xys[dot][1] > 200:
-                    dot_xys[dot][1] = dot_xys[dot][1] - 400
-                elif dot_xys[dot][1] < -200:
-                    dot_xys[dot][1] = dot_xys[dot][1] + 400
-                else:
-                    pass
-    dot_stim.xys = dot_xys
+    dot_stim.xys = dot_parameter.update_dots(frame)
     dot_stim.draw()
     win.flip()
+
+#dot_xys = []
+#for frame in range(frames):
+#    
+#    for dot in range(n_dots):
+#        if frame == 0: # randomly assign initial position
+#            dot_x = random.uniform(-200,200)
+#            dot_y = random.uniform(-200,200)
+#            dot_xys.append([dot_x,dot_y])
+#
+#        else:
+#            if coh_dot.count(dot) == 1: # determine if dot is in target group via count function
+#                if dot_xys[dot][0] + dot_speed < 200: # if the dot is still within the window
+#                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed
+#                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+#                else: # if the dot would move beyond
+#                    dot_xys[dot][0] = dot_xys[dot][0] + dot_speed - 400
+#                    dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+#            else: # update the remaining dots
+#                dot_xys[dot][0] = dot_xys[dot][0] + random.randint(-dot_speed, dot_speed)
+#                dot_xys[dot][1] = dot_xys[dot][1] + random.randint(-dot_speed, dot_speed)
+#                if dot_xys[dot][0] > 200:
+#                    dot_xys[dot][0] = dot_xys[dot][0] - 400
+#                elif dot_xys[dot][0] < -200:
+#                    dot_xys[dot][0] = dot_xys[dot][0] + 400
+#                elif dot_xys[dot][1] > 200:
+#                    dot_xys[dot][1] = dot_xys[dot][1] - 400
+#                elif dot_xys[dot][1] < -200:
+#                    dot_xys[dot][1] = dot_xys[dot][1] + 400
+#                else:
+#                    pass
+#    dot_stim.xys = dot_xys
+#    dot_stim.draw()
+#    win.flip()
 
 
 print(clock.getTime()) 
