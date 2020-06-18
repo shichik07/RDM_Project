@@ -59,13 +59,13 @@ class RDM_kinematogram(object):
                                    self.num_coh, replace = False)
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
-        self.dot_cart[1,coh_ind] +=  self.speed*self.direct 
+        self.dot_cart[0,coh_ind] +=  self.speed*self.direct 
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        if any(np.abs(self.dot_cart[1,coh_ind]) > self.dim):
+        if any(np.abs(self.dot_cart[0,coh_ind]) > self.dim):
             # find the relevant items outside 
-            redraw = np.abs(self.dot_cart[1,coh_ind]) > self.dim
+            redraw = np.abs(self.dot_cart[0,coh_ind]) > self.dim
             redraw = coh_ind[redraw]
             # randomize x and y coordinates for the abarrant coherent dots
             self.dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
