@@ -99,6 +99,8 @@ class RDM_kinematogram(object):
     
         
     def update_dots(self, frame):
+        # All indexes in this frame
+        all_ind = self.ind[[frame%3],...].flat
         # indexes of coherently moving dots
         coh_ind = np.random.choice(self.ind[[frame%3],...].flat, 
                                    self.num_coh, replace = False)
@@ -118,11 +120,11 @@ class RDM_kinematogram(object):
         # update the noise dots and if exist the redraw coordinates
         noise = np.isin(self.ind[[frame%3],...], coh_ind, invert=True)
         noise = self.ind[[frame%3],noise.flat]
-         # randomize x and y coordinates for the noise dots
+        # randomize x and y coordinates for the noise dots
         self.dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
                     self.randomize_coord(noise.size)])
         # noticed the input format for psychopy are lists are pairwise lists
-        out_list = self.dot_cart.T
+        out_list = self.dot_cart[...,all_ind].T
         return  out_list.tolist()
     
     
@@ -139,7 +141,7 @@ class RDM_kinematogram(object):
 win = visual.Window(
     size=[400,400],
     units="pix",
-    fullscr=False, # change to fullscreen later
+    fullscr=True, # change to fullscreen later
     color=[0,0,0]
 )
 
@@ -172,36 +174,34 @@ text_4 = visual.TextStim(win=win,
 dot_parameter = RDM_kinematogram()
 coord= dot_parameter.create_dots()
 
-frames = 600
+frames = 59
 n_dots = 180
 trgt_size = 40 # size of the group of coherently moving dots
 dot_xys = []
 dot_speed= 5
-dot_size = 10
+dot_size = 2
 
-# index of random dots
-coh_dot = random.sample(range(n_dots),  trgt_size) 
+field_size = 5.0
 
 
 # to keep track of time
 clock = core.Clock()
 
-for dot in range(n_dots):
-    dot_x = random.uniform(-200,200)
-    dot_y = random.uniform(-200,200)
-    dot_xys.append([dot_x,dot_y])
-
-
+# create the dot stimuli
 dot_stim = visual.ElementArrayStim(
     win=win,
     units="pix",
-    nElements=n_dots,
+    nElements=60,
     elementTex=None,
     elementMask="circle",
-    xys=coord,
-    sizes=dot_size
+    xys=coord[0:60],
+    sizes=dot_size,
+    fieldSize = field_size,
+    fieldShape='circle',
+    colors=(0, 1.0, 1.0)
+    
 )
-#    xys=dot_xys,
+
 
 
 
