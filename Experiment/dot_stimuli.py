@@ -20,7 +20,7 @@ class RDM_kinematogram(object):
     2009"""
     def __init__(self, alg='MN', dot_speed = 5, coherence = 0.4, 
                  direction = 'left', dot_density = 0.167, num_dot = 180, 
-                 radius = 200, groups = 2, rgbs = [[ -1,0,1],[ 1,0,1]]):
+                 radius = 200, groups = 2, t_group = 1, rgbs = [[ -1,0,1],[ 1,0,1]]):
         """ Initialize with algorithm choice """
         if alg == 'MN':
             # Movshon Newsome
@@ -36,14 +36,16 @@ class RDM_kinematogram(object):
         """ Check Number of dots """
         if groups == 2:
             if num_dot%6 == 0:
-                self.n_dot = num_dot # numer of dots
+                self.n_dot = num_dot # number of dots
+                self.num_coh = int(coherence*(num_dot/6)) # number of coherently moving dots (per group)
             else:
                 raise ValueError('Because you want to display two distinct dot_populations'
                                  ' with three distinct presentation sequences, the total'
                                  ' number of dots must be divisible by 6.')
         elif groups == 1:
             if num_dot%3 == 0:
-                self.n_dot = num_dot # numer of dots
+                self.n_dot = num_dot # number of dots
+                self.num_coh = int(coherence*(num_dot/6)) # number of coherently moving dots
             else:
                 raise ValueError('Because you want to display one dot_population'
                                  ' with three distinct presentation sequences, the total'
@@ -56,7 +58,7 @@ class RDM_kinematogram(object):
              
         self.speed = dot_speed # dot displacement
         self.n_dot = num_dot # numer of dots
-        self.num_coh = int(coherence*(num_dot/3)) #  coherently moving dots each frame
+        self.num_coh = int(coherence*(num_dot/6)) #  coherently moving dots each frame
         self.dim = radius # display dimensions
         if direction == 'left':
             self.direct = - 1
@@ -71,17 +73,18 @@ class RDM_kinematogram(object):
         self.ind = np.arange(0,self.n_dot,1)
         # add a grouping variable and color codes
         if self.groups == 2:
-            # group
+            # add group
             self.ind =  np.column_stack((self.ind, repmat(np.array([1,2]), 1, int(self.n_dot/2)).T))
             # add rgb color codes
             self.ind =  np.column_stack((self.ind, repmat(self.rgbs, int(self.n_dot/2), 1)))
         else:
+            # add group
             self.ind =  np.column_stack((self.ind, repmat(np.array([1]), 1, self.n_dot).T))
             # add rgb color codes
             self.ind =  np.column_stack((self.ind, repmat(np.array(self.rgbs), self.n_dot, 1)))
         # Then we set the coordinates for all dots (one array x, the other y)
-        dot_cart = np.array([randomize_coord(self.dim, self.n_dot), 
-                      randomize_coord(self.dim, self.n_dot)]).T
+        dot_cart = np.array([self.randomize_coord(self.n_dot), 
+                      self.randomize_coord(self.n_dot)]).T
         ## add the random coordinates to our matrix
         self.ind =  np.column_stack((self.ind, dot_cart))
         # create three sequences by creating a three dimensional array. In only do 
@@ -93,62 +96,45 @@ class RDM_kinematogram(object):
         pos = self.ind[0][:,range(5,7)]
         return colors.tolist(), pos.tolist()
             
-#    def double_check_decorator(func):
-#        def function_wrapper(self, frame):
-#            pop_1 = self.dot_cart[...,self.ind[[0],...].flat].T.tolist()
-#            pop_2 = self.dot_cart[...,self.ind[[1],...].flat].T.tolist()
-#            pop_3 = self.dot_cart[...,self.ind[[2],...].flat].T.tolist()
-#            print('Coordinates have been saved.')
-#            out_list = func(self, frame)
-#            if pop_1 ==  self.dot_cart[...,self.ind[[0],...].flat].T.tolist():
-#                print('Population one did not change.')
-#            else: 
-#                print('Population one did change.')
-#                
-#            if pop_2 ==  self.dot_cart[...,self.ind[[1],...].flat].T.tolist():
-#                print('Population two did not change.')
-#            else: 
-#                print('Population two did change.')
-#                
-#            if pop_3 ==  self.dot_cart[...,self.ind[[2],...].flat].T.tolist():
-#                print('Population three did not change.')
-#            else: 
-#                print('Population three did change.')
-#            return out_list
-#        return function_wrapper
-        
-    
-#    @double_check_decorator    
+
     def update_dots(self, frame):
-        # All indexes in this frame
-        all_ind = self.ind[frame%3][].flat
-        # indexes of coherently moving dots
-        coh_ind = np.random.choice(self.ind[[frame%3],...].flat, 
-                                   self.num_coh, replace = False)
-        # update the relevant indexes for coherent dots; self.direct negative 
-        # for leftward motion
-        self.dot_cart[0,coh_ind] +=  self.speed*self.direct 
-        # if any dot exceeds the limit of our circle, randomly redraw it
-        # took this strategy from Arkady Zgonnikov's implementation:
-        # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        if any(np.abs(self.dot_cart[0,coh_ind]) > self.dim):
-            # find the relevant items outside 
-            redraw = np.abs(self.dot_cart[0,coh_ind]) > self.dim
-            redraw = coh_ind[redraw]
-            # randomize x and y coordinates for the abarrant coherent dots
-            self.dot_cart[...,redraw] = np.array([self.randomize_coord(redraw.size),
-                    self.randomize_coord(redraw.size)])
-        # update the noise dots and if exist the redraw coordinates
-        noise = np.isin(self.ind[[frame%3],...], coh_ind, invert=True)
-        noise = self.ind[[frame%3],noise.flat]
-        # randomize x and y coordinates for the noise dots
-        self.dot_cart[...,noise] = np.array([self.randomize_coord(noise.size),
-                    self.randomize_coord(noise.size)])
-        # noticed the input format for psychopy are lists are pairwise lists
-        out_list = self.dot_cart[...,all_ind].T
-        return  out_list.tolist()
-    
-        
+    """ Function to update the dot positions - randomly selecting dots of the 
+    target group to move coherently and the rest to reapear in random positions"""
+    # All indexes in this frame
+    group_ind = np.where(self.ind[frame%3][:,1]==self.t_group)
+    # indexes of coherently moving dots
+    coh_ind = np.random.choice(group_ind[0], self.num_coh, replace = False)
+    # update the relevant indexes for coherent dots; self.direct negative 
+    # for leftward motion
+    self.ind[frame%3][coh_ind,5] +=  self.speed*self.direct
+    print(self.ind[frame%3][coh_ind,5])
+    # if any dot exceeds the limit of our circle, randomly redraw it
+    # took this strategy from Arkady Zgonnikov's implementation:
+    # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
+    if any(np.abs(self.ind[frame%3][coh_ind,5]) > self.dim):
+        # find the relevant items outside 
+        redraw = np.abs(self.ind[frame%3][coh_ind,5]) > self.dim
+        redraw = coh_ind[redraw]
+        # randomize x and y coordinates for the abarrant coherent dots
+        self.ind[frame%3][redraw,5:7] = np.array([self.randomize_coord(redraw.size),
+                self.randomize_coord(redraw.size)]).T
+    # update the noise dots and if exist the redraw coordinates
+    noise = np.ones(n_dot//3, dtype=bool)
+    noise[coh_ind] = False
+    # randomize x and y coordinates for the noise dots
+    self.ind[frame%3][~coh_ind,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise)),
+                self.randomize_coord(np.count_nonzero(noise))]).T
+    # because I believe that the dots are drawn in a serial manner i shuffle all
+    # the order to be on the safe side. Otherwise if two 
+    # randomly occupy the same position one superimposes the other. Not shuffling 
+    # might lead to one group of dots superimposing the other more often than the
+    # other - just because of the order that I created the groups here. Probably 
+    # I am overthinking, but it cannot hurt.
+    np.random.shuffle(self.ind[frame%3])
+    # noticed the input format for psychopy are lists are pairwise lists
+    colors = self.ind[frame%3][:,2:5]
+    pos = self.ind[frame%3][:,5:7]
+    return  colors.tolist(), pos.tolist()
         
     def randomize_coord(self, x):
         # with this function we update noise dot locations randomly 
@@ -163,9 +149,7 @@ class RDM_kinematogram(object):
 """
 Playground
 """
-coord =np.array([
-        [ 1, 0],
-        [ 1, 0]]).tolist()
+
 
 x = RDM_kinematogram(direction='right')
 
@@ -184,6 +168,14 @@ for i in range(120):
 dim = 200
 n_dot = 180
 groups = 2
+frame = 1
+coherence = 0.4
+speed = 4
+direct = - 1
+num_coh = int(coherence*(n_dot/6))
+t_group = 1
+
+
 def randomize_coord(dim, x):
     # with this function we update noise dot locations randomly 
     ''' Note to self: in the final implementation including the BM 
@@ -197,15 +189,16 @@ def create_dots(dim, n_dot):
     ''' Outputs a matrix that contains information of each dot by column: 
     indices, population-membership, one column for each respective RGB value 
     and x,y coordinates of each dot'''
-    # first we create three sequences by creating a three dimensional array
-    ind = np.arange(0,n_dot,1)
+    # first we create three index sequences to get a three dimensional array
+    ind = np.tile(range(0,60), 3)
     # add a grouping variable and color codes
     if groups == 2:
-        # group
+        # add group
         ind =  np.column_stack((ind, repmat(np.array([1,2]), 1, int(n_dot/2)).T))
         # add rgb color codes
         ind =  np.column_stack((ind, repmat(rgbs, int(n_dot/2), 1)))
     else:
+        # add group
         ind =  np.column_stack((ind, repmat(np.array([1]), 1, n_dot).T))
         # add rgb color codes
         ind =  np.column_stack((ind, repmat(np.array(rgbs), n_dot, 1)))
@@ -223,18 +216,56 @@ def create_dots(dim, n_dot):
     # matrix
     ret = random.randint(0,2)
     # noticed the input format for psychopy are lists are pairwise lists
-    colors = ind[ret][:,range(2,5)]
-    pos = colors = ind[ret][:,range(5,7)]
+    colors = ind[ret][:,2:5]
+    pos = ind[ret][:,5:7]
     return colors.tolist(), pos.tolist()
 
-rgbs = [1,2,3]
+def update_dots( frame):
+    """ Function to update the dot positions - randomly selecting dots of the 
+    target group to move coherently and the rest to reapear in random positions"""
+    # All indexes in this frame
+    group_ind = np.where(ind[frame%3][:,1]==t_group)
+    # indexes of coherently moving dots
+    coh_ind = np.random.choice(group_ind[0], num_coh, replace = False)
+    # update the relevant indexes for coherent dots; self.direct negative 
+    # for leftward motion
+    ind[frame%3][coh_ind,5] +=  speed*direct
+    print(ind[frame%3][coh_ind,5])
+    # if any dot exceeds the limit of our circle, randomly redraw it
+    # took this strategy from Arkady Zgonnikov's implementation:
+    # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
+    if any(np.abs(ind[frame%3][coh_ind,5]) > dim):
+        # find the relevant items outside 
+        redraw = np.abs( ind[frame%3][coh_ind,5]) > dim
+        redraw = coh_ind[redraw]
+        # randomize x and y coordinates for the abarrant coherent dots
+        ind[frame%3][redraw,5:7] = np.array([randomize_coord(dim, redraw.size),
+                randomize_coord(dim, redraw.size)]).T
+    range(0,ind[0].shape[0])
+    # update the noise dots and if exist the redraw coordinates
+    noise = np.ones(n_dot//3, dtype=bool)
+    noise[coh_ind] = False
+    
+    # randomize x and y coordinates for the noise dots
+    ind[frame%3][~coh_ind,5:7] = np.array([randomize_coord(dim, np.count_nonzero(noise)),
+                randomize_coord(dim, np.count_nonzero(noise))]).T
+    # because I believe that the dots are drawn in a serial manner i shuffle all
+    # the order to be on the safe side. Otherwise if two 
+    # randomly occupy the same position one superimposes the other. Not shuffling 
+    # might lead to one group of dots superimposing the other more often than the
+    # other - just because of the order that I created the groups here. Probably 
+    # I am overthinking, but it cannot hurt.
+    np.random.shuffle(ind[frame%3])
+    # noticed the input format for psychopy are lists are pairwise lists
+    colors = ind[frame%3][:,2:5]
+    pos = ind[frame%3][:,5:7]
+    return  colors.tolist(), pos.tolist()
+    
+
 rgbs = [[ -1,0,1],[ 1,0,1]]
-rgbs[0][0]
+ab = repmat(np.arange(0,n_dot/3,1),1,3)
 
-a0 = repmat(np.array([1,2]), int(n_dot/2), 1)
-repmat(a0, 2, 3)
-
-a = create_dots(dim, n_dot)
+a, b = create_dots(dim, n_dot)
 ind = np.arange(0,n_dot,1)
 print(ind)
         # randomly assign indexes to sequence
