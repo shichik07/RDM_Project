@@ -1,3 +1,5 @@
+
+
 # -*- coding: utf-8 -*-
 """
 Created on Tue May  5 11:20:31 2020
@@ -26,18 +28,17 @@ class RDM_kinematogram(object):
             # Movshon Newsome
             self.rdm_alg = 'MN'
         elif alg == 'BM':
-            self.rdm_alg = 'BM'
+            self.rdm_alg = 'BM' # not implemented yet - not sure if I will have the time
         else:
             raise ValueError('The RDM algorithm you requested does not exist. '
                              'Please specify either "MN" for the Movshon-Newsome '
-                             'algorithm, or "BM" for the Brownian motion algorithm'
-                    )
-            
-        """ Check Number of dots """
+                             'algorithm, or "BM" for the Brownian motion algorithm') 
+        # Check the dot number
         if groups == 2:
             if num_dot%6 == 0:
                 self.n_dot = num_dot # number of dots
                 self.num_coh = int(coherence*(num_dot/6)) # number of coherently moving dots (per group)
+                self.t_group = t_group # target group either one or two
             else:
                 raise ValueError('Because you want to display two distinct dot_populations'
                                  ' with three distinct presentation sequences, the total'
@@ -46,6 +47,7 @@ class RDM_kinematogram(object):
             if num_dot%3 == 0:
                 self.n_dot = num_dot # number of dots
                 self.num_coh = int(coherence*(num_dot/6)) # number of coherently moving dots
+                self.t_group = 1 
             else:
                 raise ValueError('Because you want to display one dot_population'
                                  ' with three distinct presentation sequences, the total'
@@ -53,19 +55,20 @@ class RDM_kinematogram(object):
         else:
              raise ValueError('You must specify the groups parameter to the number of'
                               ' dot populations that you would like to display.' 
-                              ' At present either one or teo dot populations can be 
-                              displayed.')
-             
+                              ' At present either one or teo dot populations can be ' 
+                              'displayed.')    
         self.speed = dot_speed # dot displacement
-        self.n_dot = num_dot # numer of dots
+        self.n_dot = num_dot # number of dots
         self.num_coh = int(coherence*(num_dot/6)) #  coherently moving dots each frame
         self.dim = radius # display dimensions
+        self.groups = groups # number of dot groups
+        self.rgbs = rgbs # colors used 
         if direction == 'left':
             self.direct = - 1
         elif direction == 'right':
             self.direct = 1
             
-        def create_dots(self):
+    def create_dots(self):
         ''' Outputs a matrix that contains information of each dot by column: 
         indices, population-membership, one column for each respective RGB value 
         and x,y coordinates of each dot'''
@@ -98,43 +101,42 @@ class RDM_kinematogram(object):
             
 
     def update_dots(self, frame):
-    """ Function to update the dot positions - randomly selecting dots of the 
-    target group to move coherently and the rest to reapear in random positions"""
-    # All indexes in this frame
-    group_ind = np.where(self.ind[frame%3][:,1]==self.t_group)
-    # indexes of coherently moving dots
-    coh_ind = np.random.choice(group_ind[0], self.num_coh, replace = False)
-    # update the relevant indexes for coherent dots; self.direct negative 
-    # for leftward motion
-    self.ind[frame%3][coh_ind,5] +=  self.speed*self.direct
-    print(self.ind[frame%3][coh_ind,5])
-    # if any dot exceeds the limit of our circle, randomly redraw it
-    # took this strategy from Arkady Zgonnikov's implementation:
-    # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-    if any(np.abs(self.ind[frame%3][coh_ind,5]) > self.dim):
-        # find the relevant items outside 
-        redraw = np.abs(self.ind[frame%3][coh_ind,5]) > self.dim
-        redraw = coh_ind[redraw]
-        # randomize x and y coordinates for the abarrant coherent dots
-        self.ind[frame%3][redraw,5:7] = np.array([self.randomize_coord(redraw.size),
-                self.randomize_coord(redraw.size)]).T
-    # update the noise dots and if exist the redraw coordinates
-    noise = np.ones(n_dot//3, dtype=bool)
-    noise[coh_ind] = False
-    # randomize x and y coordinates for the noise dots
-    self.ind[frame%3][~coh_ind,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise)),
-                self.randomize_coord(np.count_nonzero(noise))]).T
-    # because I believe that the dots are drawn in a serial manner i shuffle all
-    # the order to be on the safe side. Otherwise if two 
-    # randomly occupy the same position one superimposes the other. Not shuffling 
-    # might lead to one group of dots superimposing the other more often than the
-    # other - just because of the order that I created the groups here. Probably 
-    # I am overthinking, but it cannot hurt.
-    np.random.shuffle(self.ind[frame%3])
-    # noticed the input format for psychopy are lists are pairwise lists
-    colors = self.ind[frame%3][:,2:5]
-    pos = self.ind[frame%3][:,5:7]
-    return  colors.tolist(), pos.tolist()
+        """ Function to update the dot positions - randomly selecting dots of the 
+        target group to move coherently and the rest to reapear in random positions"""
+        # All indexes in this frame
+        group_ind = np.where(self.ind[frame%3][:,1]==self.t_group)
+        # indexes of coherently moving dots
+        coh_ind = np.random.choice(group_ind[0], self.num_coh, replace = False)
+        # update the relevant indexes for coherent dots; self.direct negative 
+        # for leftward motion
+        self.ind[frame%3][coh_ind,5] +=  self.speed*self.direct
+        # if any dot exceeds the limit of our circle, randomly redraw it
+        # took this strategy from Arkady Zgonnikov's implementation:
+        # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
+        if any(np.abs(self.ind[frame%3][coh_ind,5]) > self.dim):
+            # find the relevant items outside 
+            redraw = np.abs(self.ind[frame%3][coh_ind,5]) > self.dim
+            redraw = coh_ind[redraw]
+            # randomize x and y coordinates for the abarrant coherent dots
+            self.ind[frame%3][redraw,5:7] = np.array([self.randomize_coord(redraw.size),
+                    self.randomize_coord(redraw.size)]).T
+        # update the noise dots and if exist the redraw coordinates
+        noise = np.ones(self.n_dot//3, dtype=bool)
+        noise[coh_ind] = False
+        # randomize x and y coordinates for the noise dots
+        self.ind[frame%3][noise,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise)),
+                    self.randomize_coord(np.count_nonzero(noise))]).T
+        # because I believe that the dots are drawn in a serial manner i shuffle all
+        # the order to be on the safe side. Otherwise if two 
+        # randomly occupy the same position one superimposes the other. Not shuffling 
+        # might lead to one group of dots superimposing the other more often than the
+        # other - just because of the order that I created the groups here. Probably 
+        # I am overthinking, but it cannot hurt.
+        np.random.shuffle(self.ind[frame%3])
+        # noticed the input format for psychopy are lists are pairwise lists
+        colors = self.ind[frame%3][:,2:5]
+        pos = self.ind[frame%3][:,5:7]
+        return  colors.tolist(), pos.tolist()
         
     def randomize_coord(self, x):
         # with this function we update noise dot locations randomly 
@@ -153,8 +155,11 @@ Playground
 
 x = RDM_kinematogram(direction='right')
 
+color1, pos = x.create_dots()
 
-position = x.create_dots()
+color, pos = x.update_dots(3)
+
+
 print(len(position[0:60]))
 for i in range(120):
     position2 = x.update_dots(2)
