@@ -65,9 +65,9 @@ class RDM_kinematogram(object):
     algorithm for randomly moving dots with different coherence levels. For a 
     more thorough overview of advantages and disadvantages see Pilly and Seitz
     2009"""
-    def __init__(self, alg='MN', dot_speed = 5, coherence = 0.4, 
+    def __init__(self, alg='MN', dot_speed = 5, coherence = 0.2, 
                  direction = 'left', dot_density = 0.167, num_dot = 180, 
-                 radius = 200, groups = 2, t_group = 1, rgbs = [[ -1,0,1],[ 1,0,1]]):
+                 radius = 200, groups = 2, t_group = 1, rgbs = [[ 0,1,0],[1,0,0]]):
         """ Initialize with algorithm choice """
         if alg == 'MN':
             # Movshon Newsome
@@ -195,13 +195,13 @@ class RDM_kinematogram(object):
 win = visual.Window(
     size=[400,400],
     units="pix",
-    fullscr=True, # change to fullscreen later
+    fullscr=False, # change to fullscreen later
     color=[0,0,0]
 )
 
 text_1 = visual.TextStim(win=win, 
     text=("Welcome to this experiment!"),
-    color=[-1,-1,-1],
+    color=[1,1,1],
     flipHoriz=False #if you ever need mirrored writing set this True
 )
 
@@ -228,11 +228,11 @@ text_4 = visual.TextStim(win=win,
 dot_parameter = RDM_kinematogram()
 color, coord= dot_parameter.create_dots()
 
-frames = 590
+frames = 1210
 n_dots = 180
-trgt_size = 40 # size of the group of coherently moving dots
+trgt_size = 20  # size of the group of coherently moving dots
 dot_xys = []
-dot_speed= 5
+dot_speed= 6
 dot_size = 10
 
 field_size = 5.0
@@ -258,8 +258,15 @@ dot_stim = visual.ElementArrayStim(
 
 
 
-
+frame = 0
 clock.reset()
+# while clock.getTime() < 1:
+#     frame += 1
+#     dot_stim.colors, dot_stim.xys = dot_parameter.update_dots(frame)
+#     dot_stim.draw()
+#     win.flip()
+    
+# print(frame)
 
 for frame in range(frames):
     dot_stim.colors, dot_stim.xys = dot_parameter.update_dots(frame)
