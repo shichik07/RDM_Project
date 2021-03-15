@@ -70,13 +70,8 @@ class RDM_kinematogram(object):
         self.rgbs = rgbs # colors used
         self.frameRate = frameRate # Monitor Refreshrate
         self.fieldsize = fieldsize
-        if direction == 'left': # convert direction in degree
-            self.direct = 135
-        elif direction == 'right':  # convert direction in degree
-            self.direct = 45
-        #calculate dot displacement in degree of viusal angle
-        self.displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
-        self.displacement_y = self.speed*np.cos(self.direct*np.pi/180)/self.frameRate
+        
+       
         self.bounds_x = 0.5*self.fieldsize[0] + self.center[0] # determine aperature bounds on the x axis
         self.bounds_y = 0.5*self.fieldsize[1] + self.center[1] # determine aperature bounds on the y axis
             
@@ -112,9 +107,19 @@ class RDM_kinematogram(object):
         return colors.tolist(), pos.tolist() 
             
 
-    def update_dots(self, frame):
+    def update_dots(self, frame, direction):
         """ Function to update the dot positions - randomly selecting dots of the 
         target group to move coherently and the rest to reapear in random positions"""
+        
+        if direction == 'left': # convert direction in degree
+            self.direct = 135
+        elif direction == 'right':  # convert direction in degree
+            self.direct = 45
+            
+        #calculate dot displacement in degree of viusal angle
+        self.displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
+        self.displacement_y = self.speed*np.cos(self.direct*np.pi/180)/self.frameRate
+        
         # All indexes in this frame
         group_ind = np.where(self.ind[frame%3][:,1]==self.t_group)
         # indexes of coherently moving dots
@@ -178,7 +183,7 @@ class RDM_kinematogram(object):
         rand_loc = (np.random.rand(x)-.5)*self.fieldsize[ax] + self.center[ax]
         return rand_loc
 
-
+#%%
 
 
 """
@@ -250,6 +255,7 @@ goodDots = np.square((params.x - params.center[0]))/np.square((params.apertureSi
 np.square([10, 5])
 
 print(x)
+#%%
 """
 Playground
 """
@@ -258,6 +264,8 @@ Playground
 x = RDM_kinematogram(direction='right')
 
 color1, pos = x.create_dots()
+color2, pos = x.update_dots(1,'left')
+
 x.displacement_x
 x.bounds_y
 
