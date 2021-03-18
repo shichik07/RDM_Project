@@ -69,7 +69,6 @@ class RDM_kinematogram(object):
         Reason being, we want overall coherence to be the same for one and two groups in our
         paradigm. As such coherence is defined with respect to two groups (quite arbitrary, I know).
         """
-        self.num_coh = int(coherence*(self.n_dot/6)) # number of coherently moving dots (per group)
         self.speed = dot_speed # dot displacement
         self.center = center
         self.groups = groups # number of dot groups
@@ -190,7 +189,7 @@ class RDM_kinematogram(object):
     
     def get_coherent_dots(self, frame, coherence):
         """ Function that randomly selects coherently moving dots for either one or 
-        two randomly moving dots"""
+        two randomly moving dot populations"""
         if type(coherence) is float:
             num_coh = int(coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
             
@@ -293,7 +292,7 @@ Playground
 x = RDM_kinematogram()
 
 color1, pos = x.create_dots()
-color2, pos = x.update_dots(1, 'left', [0.1,0.6])
+color2, pos = x.update_dots(1, 'left', [0.3,0.6])
 
 x.displacement_x
 x.bounds_y
@@ -421,9 +420,9 @@ def update_dots(frame, direction, coherence):
         target group to move coherently and the rest to reapear in random positions"""
         
         if direction == 'left': # convert direction in degree
-            direct = 135
+            direct = 270
         elif direction == 'right':  # convert direction in degree
-            direct = 45
+            direct = 90
             
         #calculate dot displacement in degree of viusal angle
         displacement_x = self.speed*np.sin(direct*np.pi/180)/self.frameRate
