@@ -8,8 +8,6 @@ Created on Mon Mar 22 13:42:04 2021
 import random
 import pandas as pd
 import numpy as np
-from time import time
-from math import floor
 
 
 class GetBlockList(object):
@@ -21,16 +19,16 @@ class GetBlockList(object):
         self.Directions = ['Left', 'Right']
         self.Block = 6
         self.Color = [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]]
-        self.Color = pd.Series(Color)
-        self.Trial_total = Trial_Nr* len(Conditions)*len(Coherence_Levels)
+        self.Color = pd.Series(self.Color)
+        self.Trial_total = self.Trial_Nr* len(self.Conditions)*len(self.Coherence_Levels)
         # repeats per unique individual item
         self.reps_itm = 3
         # Create Item Pandas frame
-        self.Items = pd.DataFrame({ 'Condition': [None]*Trial_total, 
-                                       'Coherence': [None]*Trial_total,
-                                    'Colors': [None]*Trial_total,
-                                         'Direction': [None]*Trial_total,
-                                         'Block': [None]*Trial_total})
+        self.Items = pd.DataFrame({ 'Condition': [None]*self.Trial_total, 
+                                       'Coherence': [None]*self.Trial_total,
+                                    'Colors': [None]*self.Trial_total,
+                                         'Direction': [None]*self.Trial_total,
+                                         'Block': [None]*self.Trial_total})
         
     def init_list(self, colors):
         ind = 0
