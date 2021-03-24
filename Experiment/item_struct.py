@@ -14,12 +14,13 @@ class GetBlockList(object):
     def __init__(self):
         # Define List parameter
         self.Trial_Nr = 36
-        self.Coherence_Levels = [0, 10, 20, 50]
+        self.Coherence_Levels = [0, 0.1, 0.2, 0.5]
         self.Conditions = ['Mono', 'Di_null', 'Di_part', 'Di_full']
         self.Directions = ['Left', 'Right']
         self.Block = 6
         self.Color = [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]]
         self.Color = pd.Series(self.Color)
+        self.proportion = [0.2, 1.8]
         self.Trial_total = self.Trial_Nr* len(self.Conditions)*len(self.Coherence_Levels)
         # repeats per unique individual item
         self.reps_itm = 3
@@ -40,7 +41,7 @@ class GetBlockList(object):
                         for rp in range(self.reps_itm):
                             self.Items.loc[ind, 'Block'] = blck
                             self.Items.loc[ind, 'Condition'] = con
-                            self.Items.loc[ind, 'Coherence'] = coh
+                            self.Items.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
                             self.Items.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
                             self.Items.at[ind, 'Colors'] = self.Color[con_idx]
                             
@@ -48,7 +49,7 @@ class GetBlockList(object):
                                 if coh_count <= 7:
                                     #Swap the colors
                                     self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                if coh_count == 7 | coh_count == 7:
+                                if coh_count == 7 or coh_count == 7:
                                     #determine direction at random (we have 6 reps per unique item - 75% of those need to be for one color)
                                     # in order to have items approximately balanced across blocks one item needs to be selected at random determined
                                       self.Items.loc[ind, 'Direction'] = random.choice(self.Directions)
@@ -65,12 +66,18 @@ class GetBlockList(object):
         col = entry
         list.reverse(col)
         return col
-  
+    
+    def translate_coherence(self, condition, coherence):
+        # if both dot pops contain the same amount of info or are colored the same
+        if condition ==  self.Conditions[0] or condition == self.Conditions[1]:
+            coh_two = [[coherence, coherence]]
+        else:
+            # if one of the two dot pops has to contain more info than the other
+            coh_two = [[round(coherence*self.proportion[0],2), round(coherence*self.proportion[1],2)]]
+        return coh_two
     
 #%% Playground
 
            
 a = GetBlockList()
 lis = a. init_list(3)
-    
-   
