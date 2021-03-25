@@ -27,7 +27,7 @@ class RDM_kinematogram(object):
                  fieldsize = [14.8, 14.8], 
                  center = [0,0],  
                  groups = 2, 
-                 t_group = 1, 
+                 t_group = 1,
                  rgbs = [[ -1,0,1],[ 1,0,1]], 
                  frameRate = 61):
         """ Initialize with algorithm choice """
@@ -109,22 +109,17 @@ class RDM_kinematogram(object):
         pos = self.ind[0][:,range(5,7)]
         return colors.tolist(), pos.tolist() 
     
-    def update_dots(self, frame, direction, coherence):
+    def update_dots(self, frame):
 
         """ Function to update the dot positions - randomly selecting dots of the 
         target group to move coherently and the rest to reapear in random positions"""
         
-        if direction == 'left': # convert direction in degree
-            direct = 135
-        elif direction == 'right':  # convert direction in degree
-            direct = 45
-            
         #calculate dot displacement in degree of viusal angle
-        displacement_x = self.speed*np.sin(direct*np.pi/180)/self.frameRate
-        displacement_y = self.speed*np.cos(direct*np.pi/180)/self.frameRate
+        displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
+        displacement_y = self.speed*np.cos(self.direct*np.pi/180)/self.frameRate
         
         #get indices of coherently moving dots
-        coh_ind = self.get_coherent_dots(frame, coherence)
+        coh_ind = self.get_coherent_dots(frame)
         
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
@@ -187,17 +182,17 @@ class RDM_kinematogram(object):
         rand_loc = (np.random.rand(x)-.5)*self.fieldsize[ax] + self.center[ax]
         return rand_loc
     
-    def get_coherent_dots(self, frame, coherence):
+    def get_coherent_dots(self, frame):
         """ Function that randomly selects coherently moving dots for either one or 
         two randomly moving dot populations"""
-        if type(coherence) is float:
-            num_coh = int(coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
+        if type(self.coherence) is float:
+            num_coh = int(self.coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
             
             # indexes of coherently moving dots
             coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
             return coh_ind
-        elif len(coherence) == 2:
-            num_coh = np.dot(coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
+        elif len(self.coherence) == 2:
+            num_coh = np.dot(self.coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
             
             # Get the indices for both Dot pops
             Bol_pop1 = self.ind[frame%3][:,1]==1
@@ -210,6 +205,15 @@ class RDM_kinematogram(object):
             return coh_ind
         else:
             raise ValueError('Please provide one or two coherence Values')
+    
+    def update_params(self, direction, color, coherence):
+        self.rgbs = color
+        self.coherence = coherence[0]
+        if direction == 'left': # convert direction in degree
+            self.direct = 135
+        elif direction == 'right':  # convert direction in degree
+            self.direct = 45
+        
 
 #%%
 
@@ -287,12 +291,16 @@ print(x)
 """
 Playground
 """
-
+lis.iloc[1,].Colors[0]
+lis.iloc[1,].Coherence[0]
+lis.iloc[1,].Direction
 
 x = RDM_kinematogram()
 
 color1, pos = x.create_dots()
-color2, pos = x.update_dots(1, 'left', [0.3,0.6])
+
+x.update_params('right', [[-1, 0, 1], [1, 0, 1]], [[0, 0]])
+color2, pos = x.update_dots(1)
 
 x.displacement_x
 x.bounds_y
