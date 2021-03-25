@@ -22,7 +22,9 @@ class task_writer():
               'RT': None,
               'Colors': None,
               'ISI': None,
-              'Early_resp': None}
+              'Early_resp': None,
+              'Handedness': None,
+              'Part_Nr': None}
         self.loc = loc_string
 
     

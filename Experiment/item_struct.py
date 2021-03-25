@@ -16,7 +16,7 @@ class GetBlockList(object):
         self.Trial_Nr = 36
         self.Coherence_Levels = [0, 0.1, 0.2, 0.5]
         self.Conditions = ['Mono', 'Di_null', 'Di_part', 'Di_full']
-        self.Directions = ['Left', 'Right']
+        self.Directions = ['left', 'right']
         self.Block = 6
         self.Color = [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]]
         self.Color = pd.Series(self.Color)
@@ -29,7 +29,8 @@ class GetBlockList(object):
                                        'Coherence': [None]*self.Trial_total,
                                     'Colors': [None]*self.Trial_total,
                                          'Direction': [None]*self.Trial_total,
-                                         'Block': [None]*self.Trial_total})
+                                         'Block': [None]*self.Trial_total},
+                                  'Coherence_total': [None]*self.Trial_total)
         
     def init_list(self, colors):
         ind = 0
@@ -42,6 +43,7 @@ class GetBlockList(object):
                             self.Items.loc[ind, 'Block'] = blck
                             self.Items.loc[ind, 'Condition'] = con
                             self.Items.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                            self.Items.loc[ind, 'Coherence_total'] coh
                             self.Items.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
                             self.Items.at[ind, 'Colors'] = self.Color[con_idx]
                             
