@@ -20,8 +20,6 @@ class GetBlockList(object):
         self.Directions = ['left', 'right']
         self.minorDir = ['left', 'right']
         self.Block = 6
-        self.Color = [[ -1,0,1],[ 1,0,1]], [[ -1,0,1],[ 1,0,1]], [[ 7,7,7],[ 1,1,1]], [[ 9,9,9],[ 2,2,2]]
-        self.Color = pd.Series(self.Color)
         self.proportion = [0.2, 1.8]
         self.Trial_total = self.Trial_Nr* len(self.Conditions)*len(self.Coherence_Levels)
         # repeats per unique individual item
@@ -44,7 +42,8 @@ class GetBlockList(object):
             raise ValueError('Please specify Block_order as either 0 or 1') 
             
         #set color
-        self.Color = colors
+        Color = pd.Series(colors)
+
             
         # important to shuffle coherence values
         random.shuffle(self.Coherence_Levels)
@@ -60,7 +59,7 @@ class GetBlockList(object):
                             self.Items.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
                             self.Items.loc[ind, 'Coherence_total'] = coh
                             self.Items.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
-                            self.Items.at[ind, 'Colors'] = self.Color[con_idx]
+                            self.Items.at[ind, 'Colors'] = Color[con_idx]
                           
                             if con == self.Conditions[3]:
                                 if coh_count <= 3:
@@ -96,7 +95,9 @@ class GetBlockList(object):
                             # Update indices
                             ind +=1
                             coh_count += 1
-        return self.Items
+        # Have to copy - otherwise everytime we create a new list all former list will be the same. Prob would have been smarter to create a new pandas frame every time                    
+        Item_list = self.Items.copy()
+        return Item_list
     
     def reverse_color(self,entry):
         col = entry[::-1]
@@ -117,16 +118,17 @@ BiasC =  [0,1]
 colors = [[ -1,0,1],[ 1,0,1]], [[ 3,3,3],[ 5,5,5]], [[ 7,7,7],[ 1,1,1]], [[ 9,9,9],[ 2,2,2]]
 colors2 = [None]*4
 for ix,col in enumerate(colors): 
-    color2[ix] = a.reverse_color(col)
+    colors2[ix] = a.reverse_color(col)
 
-new_color_ord
+
 # for x in y:
     # bs = BiasC[x%2]
     # if x%4 <=2:
     #     col = colors
     # else:
     #     col = colors2
-    # lis= a. init_list(3, bs)
+    # lis= a.init_list(3, bs)
 
-lis= a. init_list(3, BiasC[0])
+lis= a.init_list(colors, BiasC[0])
+lis2= a.init_list(colors2, BiasC[0])
 
