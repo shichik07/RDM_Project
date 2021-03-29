@@ -62,21 +62,28 @@ class GetBlockList(object):
                             self.Items.at[ind, 'Colors'] = Color[con_idx]
                           
                             if con == self.Conditions[3]:
+                                #for the fully informative condition 75% of the items will be switched
                                 if coh_count <= 3:
                                     #Swap the colors
                                     self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                # if coh_count == 7 or coh_count == 7:
-                                #     #determine direction at random (we have 6 reps per unique item - 75% of those need to be for one color)
-                                #     # in order to have items approximately balanced across blocks one item needs to be selected at random determined
-                                #       self.Items.loc[ind, 'Direction'] = random.choice(self.Directions)
                             elif con == self.Conditions[2]:
-                                if coh_count <= 3:
+                                #for the partially informative condition (50% of the items are switched)
+                                if coh_count <= 2:
                                     #Swap Colors
                                     self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
                                     
                             # To make the last two directions random - otherwise we will have the low probability relevant condition more often left than right moving
-                            if con == self.Conditions[2] or con == self.Conditions[3]:
+                            # for the fully informative condition only. for the partially informative condition we have to do the same for the third and sxth index
+                            if con == self.Conditions[3]:
                                 if coh_count == 4:
+                                    random.shuffle(self.minorDir)
+                                    self.Items.loc[ind, 'Direction'] = self.minorDir[0]
+                                elif coh_count == 5:
+                                    #here take the other direction helps us to get a more unbiased list for each participant
+                                    self.Items.loc[ind, 'Direction'] = self.minorDir[1]
+                            elif con == self.Conditions[2]:
+                                #for the partially informative condition
+                                if coh_count == 2:
                                     random.shuffle(self.minorDir)
                                     self.Items.loc[ind, 'Direction'] = self.minorDir[0]
                                 elif coh_count == 5:
@@ -85,13 +92,14 @@ class GetBlockList(object):
                             
                             # Here we make sure that overall we get to our 75%|25% major color distinction per majority coherence
                             # in an approximately random manner
-                            if blck in bias_con and coh_count == 4:
-                                if coh == self.Coherence_Levels[1] or coh == self.Coherence_Levels[3]:
-                                    self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                            elif blck not in bias_con and coh_count == 4:
-                                if coh == self.Coherence_Levels[0] or coh == self.Coherence_Levels[2]:
-                                    self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                
+                            if con == self.Conditions[3]:
+                                if blck in bias_con and coh_count == 4:
+                                    if coh == self.Coherence_Levels[1] or coh == self.Coherence_Levels[3]:
+                                        self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
+                                elif blck not in bias_con and coh_count == 4:
+                                    if coh == self.Coherence_Levels[0] or coh == self.Coherence_Levels[2]:
+                                        self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
+                                    
                             # Update indices
                             ind +=1
                             coh_count += 1
