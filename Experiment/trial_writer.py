@@ -24,7 +24,8 @@ class task_writer():
               'ISI': None,
               'Early_resp': None,
               'Handedness': None,
-              'Part_Nr': None}
+              'Part_Nr': None,
+              'Coherence_total':None}
         self.loc = loc_string
 
     
