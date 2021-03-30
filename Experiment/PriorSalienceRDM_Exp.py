@@ -26,7 +26,6 @@ import csv
 
 #%% RDM Module for the time being
 
-
 class RDM_kinematogram(object):
     """ Functions to implement a random dot kinematogram in Psychopy using the 
     elementarray function. Two algorithms are implemented. The Movshon-Newsome 
@@ -40,7 +39,7 @@ class RDM_kinematogram(object):
                  fieldsize = [14.8, 14.8], 
                  center = [0,0],  
                  groups = 2, 
-                 t_group = 1, 
+                 t_group = 1,
                  rgbs = [[ -1,0,1],[ 1,0,1]], 
                  frameRate = 61):
         """ Initialize with algorithm choice """
@@ -122,22 +121,17 @@ class RDM_kinematogram(object):
         pos = self.ind[0][:,range(5,7)]
         return colors.tolist(), pos.tolist() 
     
-    def update_dots(self, frame, direction, coherence):
+    def update_dots(self, frame):
 
         """ Function to update the dot positions - randomly selecting dots of the 
         target group to move coherently and the rest to reapear in random positions"""
         
-        if direction == 'left': # convert direction in degree
-            direct = 270
-        elif direction == 'right':  # convert direction in degree
-            direct = 90
-            
         #calculate dot displacement in degree of viusal angle
-        displacement_x = self.speed*np.sin(direct*np.pi/180)/self.frameRate
-        displacement_y = self.speed*np.cos(direct*np.pi/180)/self.frameRate
+        displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
+        displacement_y = self.speed*np.cos(self.direct*np.pi/180)/self.frameRate
         
         #get indices of coherently moving dots
-        coh_ind = self.get_coherent_dots(frame, coherence)
+        coh_ind = self.get_coherent_dots(frame)
         
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
@@ -200,17 +194,17 @@ class RDM_kinematogram(object):
         rand_loc = (np.random.rand(x)-.5)*self.fieldsize[ax] + self.center[ax]
         return rand_loc
     
-    def get_coherent_dots(self, frame, coherence):
+    def get_coherent_dots(self, frame):
         """ Function that randomly selects coherently moving dots for either one or 
         two randomly moving dot populations"""
-        if type(coherence) is float:
-            num_coh = int(coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
+        if type(self.coherence) is float:
+            num_coh = int(self.coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
             
             # indexes of coherently moving dots
             coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
             return coh_ind
-        elif len(coherence) == 2:
-            num_coh = np.dot(coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
+        elif len(self.coherence) == 2:
+            num_coh = np.dot(self.coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
             
             # Get the indices for both Dot pops
             Bol_pop1 = self.ind[frame%3][:,1]==1
@@ -223,6 +217,15 @@ class RDM_kinematogram(object):
             return coh_ind
         else:
             raise ValueError('Please provide one or two coherence Values')
+    
+    def update_params(self, direction, color, coherence):
+        self.rgbs = color
+        self.coherence = coherence[0]
+        if direction == 'left': # convert direction in degree
+            self.direct = 135
+        elif direction == 'right':  # convert direction in degree
+            self.direct = 45
+        
 
 #%% Instructions
 
@@ -254,13 +257,13 @@ fixation = visual.TextStim(win, text='+')
 txt_1 = 'Welcome to the Experiment'
 txt_2 = u'In this task you will be presented with a set of seemingly random moving dots.'
 txt_3 = u'Your task will be to decide whether these dots are moving to either the left or right, by clicking the left and right arrows.'
-txt_4 = u'Please be as clock.reset()
-        event.getKeys(timeStamped=clock)
-        event.clearEvents() acruate and fast as possible.'
+txt_4 = u'Please be as accurate and fast as possible.'
+text_fin = u'You have finished the end of the Experiment. Thank you for your participation!'
 #%% Set Dot Presentation Parameter
 
 
 refresh_rate = 60
+ISI_interval = [0.8,1.2]
 coherence = [0.3, 0.5]
 RGBS = [[ -1,0,1],[ 1,0,1]]
 frames = 1600
@@ -274,6 +277,8 @@ RESPONSE_KEYS = ['left', 'right']
 CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
 
+CueFrames = round(0.4*refresh_rate)
+exp_cons = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 field_size = 5.0
 
 # to keep track of time
@@ -281,11 +286,11 @@ clock = core.Clock()
 
 
 
+
+
 # create the dot updating class 
 DOT_UPD = RDM_kinematogram()
 color, coord= DOT_UPD.create_dots()
-
-
 
 # create the dot stimuli 
 dot_stim= visual.ElementArrayStim(
@@ -301,6 +306,27 @@ dot_stim= visual.ElementArrayStim(
     colors=color
 )
 
+# create the informative Cues
+grating =visual.GratingStim(
+    win=win,
+    units="deg",
+    size= [2,2],
+    sf = (5.0/80.0),
+    mask = "circle"
+    )
+
+Orientations =  [0.0,90.0]
+
+# create the non-informative cue 
+circle = visual.Circle(
+    win=win,
+    units="degree",
+    radius= 2,
+    fillColor=[0, 0, 0],
+    lineColor=[-1, -1, -1]
+)
+
+
 # Instruction presentation
 def instruction_show(text):
     ''' Show instruction and wait for a response
@@ -314,35 +340,60 @@ def instruction_show(text):
     #     core.quit()
     return key
 
-def block_loop(trials, block_nr):
-    for trial in trials:
+def block_loop(trials):
+    
+    for trl_ind, trial_info in trials.iterrows():
         #PRESENT FIXATION
         # Interstimulus interval in frames?
-        ISI_time = round(random.uniform(1,1.4),2) 
+        ISI_time = round(random.uniform(ISI_interval[0], ISI_interval[1]),2) 
         fixation.draw()
         win.flip()
         ISI = StaticPeriod(screenHz=refresh_rate)
         ISI.start(ISI_time)  # start a period of 0.5s
         ''' Here we could load a cue '''
-        # update the color variable parameter
-        DOT_UPDATE.rgbs = RGBS
+        # update the trial parameter
+        DOT_UPD.update_params(direction = trial_info.Direction, 
+                              color= trial_info.Colors, 
+                              coherence = trial_info.Coherence)
+        # Update Trial dictionary
+        new_entries =  {'Trial_nr': trl_ind, 
+              'Condition': None, 
+              'Coherence': trial_info.Coherence,
+              'Direction':  trial_info.Direction,
+              'Block': trial_info.Block,
+              'Colors': trial_info.Colors,
+              'ISI': ISI_time}
+
+        
         # create a fresh instance for the dots
         color, coord= DOT_UPDATE.create_dots()
-        # update the color variable parameter
-        DOT_UPDATE.rgbs = RGBS
+       
         #stim.image = 'largeFile.bmp'  # could take some time
         ISI.complete()  # finish theevent.clearEvents()
+        
         #PRESENT CUE
+        if trial_info.Condition == exp_con[0] or trial_info.Condition == exp_con[1]:
+            for frame in range(CueFrames):
+                circle.draw()
+                win.flip()
+        elif trial_info.Condition == exp_con[2]:
+            grating.ori = Orientations[0]
+            for frame in range(CueFrames):          
+                grating.draw()
+                win.flip()
+        elif trial_info.Condition == exp_con[3]:
+            grating.ori = Orientations[1]
+            for frame in range(CueFrames):
+                grating.draw()
+                win.flip()
+            
         
-        #PRESENT FIXATION
-       
-        win = visual.Window(size = [1920,1080],
-            monitor = "DellXPS15_screen",
-            units="deg",
-            fullscr=False, # change to fullscreen later
-            color=[0,0,0]
-        )
-        
+        #PRESENT FIXATION Number 2
+        fixation.draw()
+        win.flip()
+        ISI = StaticPeriod(screenHz=refresh_rate)
+        ISI.start(ISI_time)  # start a period of 0.5s
+        ISI.complete()  # finish theevent.clearEvents()
                 
         #RESET CLOCK and clear events
         clock.reset()
@@ -351,25 +402,29 @@ def block_loop(trials, block_nr):
         
         #PRESENT STIM
         for frame in range(frames):
-           dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame, direction, coherence)
+           dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
            dot_stim.draw()
            win.flip()
            keys = event.getKeys(RESPONSE_KEYS,timeStamped=clock)
            if event.getKeys(QUIT_KEY):
+               wrt.finish() # save data recorded
                win.close()
                core.quit()
            elif len(keys)>0:
-               print(keys)
-               break
-                
+               print(keys)     
+        #Write Trial Information  
+        wrt.update(new_dict)    
+    wrt.finish() # save intermediate results     
+    
     
 
 
 #%% Experimental loop
 
+
 # Prepare Input by User/Experimenter
 expInfo = {'ProbandenNr':'', 'Geschlecht':['männlich','weiblich','divers'],
-            'Alter': '' , 'Händikeit': ['Links', 'Rechts'], 'Gruppe (für Experimentatorin)': ['PD', 'HC']}
+            'Alter': '' , 'Händikeit': ['Links', 'Rechts'], 'Gruppe (für Experimentatorin)': ['PD', 'HC', 'PI']}
 expInfo['dateStr'] = data.getDateStr()  # add the current time
 
 # Updates DIALOGUE with dialogue response
@@ -377,56 +432,55 @@ inp  = gui.DlgFromDict(expInfo, title='Random Dot Motion Task',fixed=['dateStr']
 ID   = inp.data[4]
 DATE = inp.data[5]
 
+#LOAD TRIALS
+
+#lis = ...
+
+
+
+# Initialize data saving
+save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+wrt = task_writer(save_path)
+
+# Create Trial dictionary
+TRIAL =  {'Trial_nr': None, 
+              'Condition':None, 
+              'Gender': inp.data[1],
+              'Correct': None,
+              'Coherence': None,
+              'Response': None,
+              'Group': inp.data[5],
+              'Direction': None,
+              'Age': inp.data[2],
+              'Block': None,
+              'RT': None,
+              'Colors': None,
+              'ISI': None,
+              'Early_resp': None,
+              'Handedness': inp.data[4],
+              'Part_Nr': inp.data[0]}
+
+
+# Initialize file
+wrt.set_file()
+wrt.finish()
+
 instruction_show('wot')
 instruction_show(txt_2)
 instruction_show(txt_3)
 instruction_show(txt_4)
 
 ## Initialize data saving
+wrt.start()
 
-save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
-data_dir = os.path.abspath(save_path + '/data/') # just in case the absolute path is required
-
-if not os.path.exists(data_dir):
-   os.makedirs(data_dir)
-
-# make a text file to save data
-data_file  = data_dir + '/RDM_PD' + ID  + '_time_' + DATE + '.csv'
-cnt = 0
-#
-#Make sure we do not overwrite our data
-while os.path.exists(data_file):
-    cnt += 1
-    data_file = data_dir + '/RDM_PD' + expInfo['Participant_nr'] + expInfo['dateStr'] + '_v' + str(cnt) + '.csv'
-
-
-# Create a dictionary with the trial Infos
-trial_dict = {'Trial_nr': None , 
-              'Condition':None, 
-              'Gender': None,
-              'Correct': None,
-              'Coherence': None,
-              'Response': None,
-              'Group': None,
-              'Direction': None,
-              'Age': None,
-              'Block': None,
-              'RT': None,
-              'Colors': None,
-              'ISI': None,
-              'Early_resp': None}
-
-
-
-# Get the Fieldnames
-fnames = list(trial_dict.keys()) 
-
-dataFile = open(fileName, 'w')  # a simple text file with 'comma-separated-values'
-writer = csv.DictWriter(dataFile, fieldnames = fnames)
-writer.writeheader()
-
-
-
-writer.writerow(trial_dict)
-
-dataFile.close()
+# start Block
+blocks = lis.Block.unique()
+for block in blocks:
+    trials = lis.loc[lis.Block == block]
+    for trial_ind, trial_info in trials.iterrows():
+        print(trial_ind)
+        
+        
+    block_loop(trials, block_nr)
+    
+instruction_show(text_fin)
