@@ -25,7 +25,8 @@ class task_writer():
               'Early_resp': None,
               'Handedness': None,
               'Part_Nr': None,
-              'Coherence_total':None}
+              'Coherence_total':None,
+              'Date': None}
         self.loc = loc_string
 
     
@@ -36,13 +37,13 @@ class task_writer():
             os.makedirs(data_dir)
     
         #create a text file to save data
-        self.fileName = data_dir + '/RDM_PD' + 'participantX' + '_today' + '.csv'
+        self.fileName = data_dir + '/RDM_PD' + 'participant_' + self.trial_dict['Part_Nr']  + '.csv'
         cnt = 0
 
         #Make sure we do not overwrite our data
         while os.path.exists(self.fileName):
             cnt += 1
-            self.fileName = data_dir + '/RDM_PD' + 'participantX' + '_today' + '_v' + str(cnt) + '.csv'
+            self.fileName = data_dir + '/RDM_PD' +'participant_' + self.trial_dict['Part_Nr'] + '_v' + str(cnt) + '.csv'
 
         # Get the Fieldnames
         self.fnames = list(self.trial_dict.keys()) 
@@ -67,15 +68,15 @@ class task_writer():
 
 #%% Test
     
-save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
-wrt = task_writer(save_path)
-# Initialize file
-wrt.set_file()
+# save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+# wrt = task_writer(save_path)
+# # Initialize file
+# wrt.set_file()
 
-# Update file
-new_dict = {'Condition': 'AB', 'Age':22}
-wrt.update(new_dict)
-wrt.finish()
-wrt.start()
-wrt.update(new_dict)
-wrt.finish()
+# # Update file
+# new_dict = {'Condition': 'AB', 'Age':22}
+# wrt.update(new_dict)
+# wrt.finish()
+# wrt.start()
+# wrt.update(new_dict)
+# wrt.finish()
