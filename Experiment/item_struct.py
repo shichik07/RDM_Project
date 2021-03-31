@@ -48,7 +48,9 @@ class GetBlockList(object):
         # important to shuffle coherence values
         random.shuffle(self.Coherence_Levels)
         ind = 0
-        for blck in range(self.Block):    
+        for blck in range(self.Block): 
+            # important to shuffle coherence values
+            random.shuffle(self.Coherence_Levels)
             for con_idx, con in enumerate(self.Conditions):
                 for coh in self.Coherence_Levels:
                     coh_count = 0

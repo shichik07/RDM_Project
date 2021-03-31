@@ -220,9 +220,9 @@ class RDM_kinematogram(object):
         self.rgbs = color
         self.coherence = coherence[0]
         if direction == 'left': # convert direction in degree
-            self.direct = 135
+            self.direct = 270
         elif direction == 'right':  # convert direction in degree
-            self.direct = 45
+            self.direct = 90
         
 
 #%% Instructions
@@ -368,7 +368,9 @@ def block_loop(trials):
               'ISI': [ISI_1, ISI_2],
               'Coherence_total': trial_info.Coherence_total,
               'Response': None,
+              'Correct': 0, #default is incorrect
               'RT': None}
+            
 
         
         # create a fresh instance for the dots
@@ -424,7 +426,10 @@ def block_loop(trials):
                 new_entries['Response'] = 'No_resp'
                 new_entries['RT'] = None
           
-        #Write Trial Information  
+        #Write Trial Information 
+        if new_entries['Response'] == new_entries['Direction']:
+            new_entries['Correct'] = 1
+        
         wrt.update(new_entries)    
     wrt.finish() # save intermediate results     
     
@@ -456,10 +461,11 @@ wrt = task_writer(save_path)
 
 # Create Trial dictionary
 BaseInf =  {'Gender': inp.data[1],
-          'Group': inp.data[5],
-          'Age': inp.data[2],
-          'Handedness': inp.data[4],
-          'Part_Nr': inp.data[0]}
+          'Group': inp.data[2],
+          'Age': inp.data[0],
+          'Handedness': inp.data[3],
+          'Part_Nr': inp.data[4],
+          'Date': inp.data[5]}
 
 
 # Initialize file
