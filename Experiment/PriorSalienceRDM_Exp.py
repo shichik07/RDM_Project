@@ -14,14 +14,12 @@ randomization structure is inspired by...
 
 """
 
-from psychopy import core, visual, gui, data, event, monitors
+from psychopy import core, visual, gui, event, data, monitors
 from psychopy.tools.filetools import fromFile, toFile
 import random, os
 import numpy as np
 from numpy.matlib import repmat
 import csv
-
-
 
 
 #%% RDM Module for the time being
@@ -238,7 +236,7 @@ my_monitor.setDistance(60)
 my_monitor.saveMon()
 
 
-win = visual.Window(size = [1920,1080],
+win = visual.Window(size = [400,400],#[1920,1080],
     monitor = "DellXPS15_screen",
     units="deg",
     fullscr=False, # change to fullscreen later
@@ -256,7 +254,7 @@ fixation = visual.TextStim(win, text='+')
 
 txt_1 = 'Welcome to the Experiment'
 txt_2 = u'In this task you will be presented with a set of seemingly random moving dots.'
-txt_3 = u'Your task will be to decide whether these dots are moving to either the left or right, by clicking the left and right arrows.'
+txt_3 = u'Your task will be to decide whether t hese dots are moving to either the left or right, by clicking the left and right arrows.'
 txt_4 = u'Please be as accurate and fast as possible.'
 text_fin = u'You have finished the end of the Experiment. Thank you for your participation!'
 #%% Set Dot Presentation Parameter
@@ -266,7 +264,7 @@ refresh_rate = 60
 ISI_interval = [0.8,1.2]
 coherence = [0.3, 0.5]
 RGBS = [[ -1,0,1],[ 1,0,1]]
-frames = 1600
+frames = 300
 n_dots = 60
 trgt_size = 20  # size of the group of coherently moving dots
 dot_xys = []
@@ -278,8 +276,9 @@ CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
 
 CueFrames = round(0.4*refresh_rate)
-exp_cons = ['Mono', 'Di_null', 'Di_part', 'Di_full']
+exp_con = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 field_size = 5.0
+Orientations =  [0.0,90.0] # of the informative cue stimuli
 
 # to keep track of time
 clock = core.Clock()
@@ -310,20 +309,19 @@ dot_stim= visual.ElementArrayStim(
 grating =visual.GratingStim(
     win=win,
     units="deg",
-    size= [2,2],
-    sf = (5.0/80.0),
-    mask = "circle"
+    size= [4,4],
+    sf = (5.0/4.0),
+    mask = "circle",
+    contrast = 1
     )
-
-Orientations =  [0.0,90.0]
 
 # create the non-informative cue 
 circle = visual.Circle(
     win=win,
-    units="degree",
+    units="deg",
     radius= 2,
-    fillColor=[0, 0, 0],
-    lineColor=[-1, -1, -1]
+    fillColor=[1, 1, 1],
+    lineColor=[0, 0, 0]
 )
 
 
@@ -335,21 +333,26 @@ def instruction_show(text):
     Instruction.draw()
     win.flip()
     key = event.waitKeys()
-    # if key == 'escape':
-    #     win.close()
-    #     core.quit()
+    if key == 'escape':
+         win.close()
+         core.quit()
     return key
+
+for trl_ind, trial_info in lis.iterrows():
+    pass
 
 def block_loop(trials):
     
     for trl_ind, trial_info in trials.iterrows():
         #PRESENT FIXATION
         # Interstimulus interval in frames?
-        ISI_time = round(random.uniform(ISI_interval[0], ISI_interval[1]),2) 
+        ISI_1 = round(random.uniform(ISI_interval[0], ISI_interval[1]),2) 
+        ISI_2 = round(random.uniform(ISI_interval[0], ISI_interval[1]),2) #get another random interval
+        
         fixation.draw()
         win.flip()
-        ISI = StaticPeriod(screenHz=refresh_rate)
-        ISI.start(ISI_time)  # start a period of 0.5s
+        ISI = core.StaticPeriod(screenHz=refresh_rate)
+        ISI.start(ISI_2)  # start a period of 0.5s
         ''' Here we could load a cue '''
         # update the trial parameter
         DOT_UPD.update_params(direction = trial_info.Direction, 
@@ -357,16 +360,19 @@ def block_loop(trials):
                               coherence = trial_info.Coherence)
         # Update Trial dictionary
         new_entries =  {'Trial_nr': trl_ind, 
-              'Condition': None, 
+              'Condition': trial_info.Condition, 
               'Coherence': trial_info.Coherence,
               'Direction':  trial_info.Direction,
               'Block': trial_info.Block,
               'Colors': trial_info.Colors,
-              'ISI': ISI_time}
+              'ISI': [ISI_1, ISI_2],
+              'Coherence_total': trial_info.Coherence_total,
+              'Response': None,
+              'RT': None}
 
         
         # create a fresh instance for the dots
-        color, coord= DOT_UPDATE.create_dots()
+        color, coord= DOT_UPD.create_dots()
        
         #stim.image = 'largeFile.bmp'  # could take some time
         ISI.complete()  # finish theevent.clearEvents()
@@ -391,29 +397,35 @@ def block_loop(trials):
         #PRESENT FIXATION Number 2
         fixation.draw()
         win.flip()
-        ISI = StaticPeriod(screenHz=refresh_rate)
-        ISI.start(ISI_time)  # start a period of 0.5s
+        ISI = core.StaticPeriod(screenHz=refresh_rate)
+        ISI.start(ISI_2)  # start a period of 0.5s
         ISI.complete()  # finish theevent.clearEvents()
-                
-        #RESET CLOCK and clear events
-        clock.reset()
         
-        event.clearEvents()
         
         #PRESENT STIM
         for frame in range(frames):
-           dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
-           dot_stim.draw()
-           win.flip()
-           keys = event.getKeys(RESPONSE_KEYS,timeStamped=clock)
-           if event.getKeys(QUIT_KEY):
-               wrt.finish() # save data recorded
-               win.close()
-               core.quit()
-           elif len(keys)>0:
-               print(keys)     
+            if frame == 0:
+                clock.reset() # t0 for RT
+                event.clearEvents() # reset events
+                #send onset trigger
+            dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
+            dot_stim.draw()
+            win.flip()
+            keys = event.getKeys(timeStamped=clock)
+            if keys != []:
+                if keys[0][0] in QUIT_KEY:
+                    wrt.finish()
+                    win.close()
+                    core.quit()
+                elif keys[0][0] in RESPONSE_KEYS:
+                    new_entries['Response'], new_entries['RT'] = keys[0]
+                    break # break presentation loop early
+            elif frame == frames and keys == []:
+                new_entries['Response'] = 'No_resp'
+                new_entries['RT'] = None
+          
         #Write Trial Information  
-        wrt.update(new_dict)    
+        wrt.update(new_entries)    
     wrt.finish() # save intermediate results     
     
     
@@ -443,26 +455,16 @@ save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Expe
 wrt = task_writer(save_path)
 
 # Create Trial dictionary
-TRIAL =  {'Trial_nr': None, 
-              'Condition':None, 
-              'Gender': inp.data[1],
-              'Correct': None,
-              'Coherence': None,
-              'Response': None,
-              'Group': inp.data[5],
-              'Direction': None,
-              'Age': inp.data[2],
-              'Block': None,
-              'RT': None,
-              'Colors': None,
-              'ISI': None,
-              'Early_resp': None,
-              'Handedness': inp.data[4],
-              'Part_Nr': inp.data[0]}
+BaseInf =  {'Gender': inp.data[1],
+          'Group': inp.data[5],
+          'Age': inp.data[2],
+          'Handedness': inp.data[4],
+          'Part_Nr': inp.data[0]}
 
 
 # Initialize file
 wrt.set_file()
+wrt.update(BaseInf)  
 wrt.finish()
 
 instruction_show('wot')
@@ -473,14 +475,11 @@ instruction_show(txt_4)
 ## Initialize data saving
 wrt.start()
 
+
 # start Block
 blocks = lis.Block.unique()
 for block in blocks:
     trials = lis.loc[lis.Block == block]
-    for trial_ind, trial_info in trials.iterrows():
-        print(trial_ind)
-        
-        
-    block_loop(trials, block_nr)
+    block_loop(trials)
     
 instruction_show(text_fin)
