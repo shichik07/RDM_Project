@@ -213,6 +213,13 @@ class RDM_kinematogram(object):
             self.direct = 135
         elif direction == 'right':  # convert direction in degree
             self.direct = 45
+            
+     def bm_random_loc(self, start_x, start_y):
+        rdm_theta = np.random.rand(len(start_x)) *2*np.pi # random angle on a circle
+        new_x = start_x + self.speed*np.cos(rdm_theta)/self.frameRate # "speed" is treated as the radius
+        new_y = start_y + self.speed*np.sin(rdm_theta)/self.frameRate
+        return new_x, new_y
+        
         
 
 #%%
