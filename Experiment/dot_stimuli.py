@@ -129,7 +129,7 @@ class RDM_kinematogram(object):
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        redraw = self.exceed_bounds(self.ind[frame%3][coh_ind,5:7])
+        redraw = self.exceed_bounds(self.ind[frame%3][:,5:7])
         #if we find any coordinates in excess redraw them
         if redraw is not False:
             self.ind[frame%3][coh_ind[redraw],5:7] = np.array([self.randomize_coord(redraw.size, 0),
@@ -214,7 +214,7 @@ class RDM_kinematogram(object):
         elif direction == 'right':  # convert direction in degree
             self.direct = 45
             
-     def bm_random_loc(self, start_x, start_y):
+    def bm_random_loc(self, start_x, start_y):
         rdm_theta = np.random.rand(len(start_x)) *2*np.pi # random angle on a circle
         new_x = start_x + self.speed*np.cos(rdm_theta)/self.frameRate # "speed" is treated as the radius
         new_y = start_y + self.speed*np.sin(rdm_theta)/self.frameRate
@@ -306,31 +306,13 @@ x = RDM_kinematogram()
 
 color1, pos = x.create_dots()
 
-x.update_params('right', [[-1, 0, 1], [1, 0, 1]], [[0, 0]])
-color2, pos = x.update_dots(1)
-
-x.displacement_x
-x.bounds_y
-
-for i in range(500):
-    color, pos = x.update_dots(3)
-print(pos1)
-color, pos1 = x.update_dots(3)
-abs(np.asarray(pos)) - abs(np.asarray(pos1))
-
-
-
-print(len(position[0:60]))
-for i in range(120):
-    position2 = x.update_dots(2)
-    position3 = x.update_dots(i)
-    position2 == position3
-    print(position2)
-
+item_list = x.ind
+ind = item_list
 ## PARAMETER
 
 frameRate = 61
-n_dot = 180
+n_dot = 60
+coherence = [0.5,0.5]
 groups = 2
 frame = 1
 rgbs = [[ -1,0,1],[ 1,0,1]]
@@ -340,6 +322,7 @@ fieldsize = [14.8, 14.8]
 bounds_x = 0.5*fieldsize[0] + center[0] # determine aperature bounds on the x axis
 bounds_y = 0.5*fieldsize[1] + center[1] # determine aperature bounds on the y axis
 t_group = 1
+direct = 270
 ## FUCTIONS
 
 
@@ -356,7 +339,7 @@ def randomize_coord(x, axis):
         rand_loc = (np.random.rand(x)-.5)*fieldsize[ax] + center[ax]
         return rand_loc
 
- def exceed_bounds(coord):
+def exceed_bounds(coord):
         '''function to determine if specific dots exceed the bounds of our aperture.
         Returns indexes of dots that are in excess.
         '''
@@ -403,63 +386,64 @@ def create_dots():
         pos = ind[0][:,range(5,7)]
         return colors.tolist(), pos.tolist() 
 
-def get_coherent_dots(frame, coherence):
-    """ Function that randomly selects coherently moving dots for either one or 
-    two randomly moving dots"""
-    if type(coherence) is float:
-        num_coh = int(coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
-        
-        # indexes of coherently moving dots
-        coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
-        return coh_ind
-    
-    elif len(coherence) == 2:
-        num_coh = np.dot(coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
-        
-        # Get the indices for both Dot pops
-        Bol_pop1 = self.ind[frame%3][:,1]==1
-        Pop_1 = np.where(Bol_pop1)[0]
-        Pop_2 = np.where(~Bol_pop1)[0]
-        
-        # indexes of coherently moving dots
-        coh_ind = np.random.choice(Pop_1, int(num_coh[0]), replace = False)
-        coh_ind = np.concatenate((coh_ind, np.random.choice(Pop_2, int(num_coh[1]), replace = False)))
-        return coh_ind
-    else:
-        raise ValueError('Please provide one or two coherence Values')
-    
+def get_coherent_dots(frame):
+       """ Function that randomly selects coherently moving dots for either one or 
+       two randomly moving dot populations"""
+       if type(coherence) is float:
+           num_coh = int(coherence*int(n_dot//3)) # number of coherently moving dots (per group)
+           
+           # indexes of coherently moving dots
+           coh_ind = np.random.choice(range(int(n_dot//3)), num_coh, replace = False)
+           return coh_ind
+       elif len(coherence) == 2:
+           num_coh = np.dot(coherence,int(n_dot//6)) # number of coherently moving dots (per group)
+           
+           # Get the indices for both Dot pops
+           Bol_pop1 = ind[frame%3][:,1]==1
+           Pop_1 = np.where(Bol_pop1)[0]
+           Pop_2 = np.where(~Bol_pop1)[0]
+           
+           # indexes of coherently moving dots
+           coh_ind = np.random.choice(Pop_1, int(num_coh[0]), replace = False)
+           coh_ind = np.concatenate((coh_ind, np.random.choice(Pop_2, int(num_coh[1]), replace = False)))
+           return coh_ind
+       else:
+           raise ValueError('Please provide one or two coherence Values')
+   
 
-def update_dots(frame, direction, coherence):
+def update_dots(frame):
 
         """ Function to update the dot positions - randomly selecting dots of the 
         target group to move coherently and the rest to reapear in random positions"""
         
-        if direction == 'left': # convert direction in degree
-            direct = 270
-        elif direction == 'right':  # convert direction in degree
-            direct = 90
-            
         #calculate dot displacement in degree of viusal angle
-        displacement_x = self.speed*np.sin(direct*np.pi/180)/self.frameRate
-        displacement_y = self.speed*np.cos(direct*np.pi/180)/self.frameRate
+        displacement_x = speed*np.sin(direct*np.pi/180)/frameRate
+        displacement_y = speed*np.cos(direct*np.pi/180)/frameRate
         
         #get indices of coherently moving dots
-        coh_ind = self.get_coherent_dots(frame, coherence)
+        coh_ind = get_coherent_dots(frame)
         
         # update the relevant indexes for coherent dots; self.direct negative 
         # for leftward motion
-        self.ind[frame%3][coh_ind,5] +=  displacement_x
-        self.ind[frame%3][coh_ind,6] +=  displacement_y
+        ind[frame%3][coh_ind,5] +=  displacement_x
+        ind[frame%3][coh_ind,6] +=  displacement_y
+        
+         # update the noise dots 
+        noise = np.ones(self.n_dot//3, dtype=bool)
+        noise[coh_ind] = False
+        # randomize x and y coordinates for the noise dots
+        self.ind[frame%3][noise,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise), 0),
+                    self.randomize_coord(np.count_nonzero(noise), 1)]).T
         
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
-        redraw = self.exceed_bounds(self.ind[frame%3][coh_ind,5:7])
+        redraw = exceed_bounds(ind[frame%3][:,5:7])
         #if we find any coordinates in excess redraw them
         if redraw is not False:
             self.ind[frame%3][coh_ind[redraw],5:7] = np.array([self.randomize_coord(redraw.size, 0),
                     self.randomize_coord(redraw.size, 1)]).T
-        # update the noise dots and if exist the redraw coordinates
+        # update the noise dots 
         noise = np.ones(self.n_dot//3, dtype=bool)
         noise[coh_ind] = False
         # randomize x and y coordinates for the noise dots
@@ -476,8 +460,6 @@ def update_dots(frame, direction, coherence):
         colors = self.ind[frame%3][:,2:5]
         pos = self.ind[frame%3][:,5:7]
         return  colors.tolist(), pos.tolist()
-    
-
 
 
 
