@@ -121,11 +121,25 @@ class RDM_kinematogram(object):
         #get indices of coherently moving dots
         coh_ind = self.get_coherent_dots(frame)
         
-        # update the relevant indexes for coherent dots; self.direct negative 
-        # for leftward motion
+        # update the relevant indexes for coherent dots;
         self.ind[frame%3][coh_ind,5] +=  displacement_x
         self.ind[frame%3][coh_ind,6] +=  displacement_y
         
+        # get the noise dot indices
+        noise = np.ones(self.n_dot//3, dtype=bool)
+        noise[coh_ind] = False
+        
+        #update the noise dot indices
+        if self.alg == 'MN':# for Movshon-Newsome updating (random speed and direction)
+            # randomize x and y coordinates for the noise dots
+            self.ind[frame%3][noise,5:7] = np.array([
+                self.randomize_coord(np.count_nonzero(noise), 0),
+                 self.randomize_coord(np.count_nonzero(noise), 1)]).T
+        elif self.alg == 'BM': # for Brownian Motion updating (random direction, fixed speed)
+            self.ind[frame%3][noise,5:7] = self.bm_random_loc(
+                self.ind[frame%3][noise,5], 
+                self.ind[frame%3][noise,6])
+            
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
@@ -134,12 +148,7 @@ class RDM_kinematogram(object):
         if redraw is not False:
             self.ind[frame%3][coh_ind[redraw],5:7] = np.array([self.randomize_coord(redraw.size, 0),
                     self.randomize_coord(redraw.size, 1)]).T
-        # update the noise dots and if exist the redraw coordinates
-        noise = np.ones(self.n_dot//3, dtype=bool)
-        noise[coh_ind] = False
-        # randomize x and y coordinates for the noise dots
-        self.ind[frame%3][noise,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise), 0),
-                    self.randomize_coord(np.count_nonzero(noise), 1)]).T
+       
         # because I believe that the dots are drawn in a serial manner i shuffle all
         # the order to be on the safe side. Otherwise if two 
         # randomly occupy the same position one superimposes the other. Not shuffling 
@@ -218,7 +227,8 @@ class RDM_kinematogram(object):
         rdm_theta = np.random.rand(len(start_x)) *2*np.pi # random angle on a circle
         new_x = start_x + self.speed*np.cos(rdm_theta)/self.frameRate # "speed" is treated as the radius
         new_y = start_y + self.speed*np.sin(rdm_theta)/self.frameRate
-        return new_x, new_y
+        new_coord = np.column_stack((new_x, new_y))
+        return new_coord
         
         
 
@@ -428,13 +438,18 @@ def update_dots(frame):
         ind[frame%3][coh_ind,5] +=  displacement_x
         ind[frame%3][coh_ind,6] +=  displacement_y
         
-         # update the noise dots 
-        noise = np.ones(self.n_dot//3, dtype=bool)
+         # find the noise dots 
+        noise = np.ones(n_dot//3, dtype=bool)
         noise[coh_ind] = False
-        # randomize x and y coordinates for the noise dots
-        self.ind[frame%3][noise,5:7] = np.array([self.randomize_coord(np.count_nonzero(noise), 0),
-                    self.randomize_coord(np.count_nonzero(noise), 1)]).T
         
+        #update the noise dots dependent on algorithm choice
+        if alg == 'MN':
+            # randomize x and y coordinates for the noise dots
+            ind[frame%3][noise,5:7] = np.array([randomize_coord(np.count_nonzero(noise), 0),
+                        randomize_coord(np.count_nonzero(noise), 1)]).T
+        elif alg == 'BM':
+            ind[frame%3][noise,5:7] = bm_random_loc(ind[frame%3][noise,5], ind[frame%3][noise,6])
+            
         # if any dot exceeds the limit of our circle, randomly redraw it
         # took this strategy from Arkady Zgonnikov's implementation:
         # "https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py"
@@ -462,7 +477,12 @@ def update_dots(frame):
         return  colors.tolist(), pos.tolist()
 
 
-
+def bm_random_loc(start_x, start_y):
+       rdm_theta = np.random.rand(len(start_x)) *2*np.pi # random angle on a circle
+       new_x = start_x + speed*np.cos(rdm_theta)/frameRate # "speed" is treated as the radius
+       new_y = start_y + speed*np.sin(rdm_theta)/frameRate
+       new_coord = np.column_stack((new_x, new_y))
+       return new_coord
 
 a = update_dots(frame=1, direction='left', coherence = [0.1, 0.5])
 
