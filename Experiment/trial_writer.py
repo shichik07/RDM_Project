@@ -8,25 +8,8 @@ Created on Thu Mar 18 12:51:38 2021
 import csv, os
 
 class task_writer():
-    def __init__(self, loc_string):
-        self.trial_dict = {'Trial_nr': None , 
-              'Condition':None, 
-              'Gender': None,
-              'Correct': None,
-              'Coherence': None,
-              'Response': None,
-              'Group': None,
-              'Direction': None,
-              'Age': None,
-              'Block': None,
-              'RT': None,
-              'Colors': None,
-              'ISI': None,
-              'Early_resp': None,
-              'Handedness': None,
-              'Part_Nr': None,
-              'Coherence_total':None,
-              'Date': None}
+    def __init__(self, loc_string, trl_dct):
+        self.trial_dict = trl_dct
         self.loc = loc_string
 
     
