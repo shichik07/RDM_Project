@@ -119,7 +119,6 @@ class RDM_kinematogram(object):
         if self.alg == 'BM':
             frame = 0
         
-        
         #calculate dot displacement in degree of viusal angle
         displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
         displacement_y = self.speed*np.cos(self.direct*np.pi/180)/self.frameRate
