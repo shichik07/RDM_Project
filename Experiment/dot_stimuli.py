@@ -21,8 +21,8 @@ class RDM_kinematogram(object):
     different coherence levels. For a more thorough overview of advantages and 
     disadvantages see Pilly and Seitz 2009"""
     def __init__(self, 
-                 alg='BM', 
-                 dot_speed = 6,  
+                 alg='MN', 
+                 dot_speed = 8,  
                  dot_density = 16.7, 
                  fieldsize = [14.8, 14.8], 
                  center = [0,0],  
@@ -111,9 +111,14 @@ class RDM_kinematogram(object):
         return colors.tolist(), pos.tolist() 
     
     def update_dots(self, frame):
-
+        
         """ Function to update the dot positions - randomly selecting dots of the 
         target group to move coherently and the rest to reapear in random positions"""
+        
+        #quick fix for the BM -algorithm, which consitutes of only a single dot population
+        if self.alg == 'BM':
+            frame = 0
+        
         
         #calculate dot displacement in degree of viusal angle
         displacement_x = self.speed*np.sin(self.direct*np.pi/180)/self.frameRate
