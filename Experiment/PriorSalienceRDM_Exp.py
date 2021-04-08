@@ -15,14 +15,13 @@ randomization structure is inspired by...
 """
 
 from psychopy import core, visual, gui, event, data, monitors
-from psychopy.tools.filetools import fromFile, toFile
-import random, os
-import numpy as np
-from numpy.matlib import repmat
-import csv
-
+import pandas as pd
+from PriorPD.Task_func import trial_writer as tw
+from PriorPD.TwoDotRDM import dot_stimuli as ds
 
 #%% Instructions
+
+
 
 # Set Monitor
 
@@ -47,7 +46,6 @@ Instruction = visual.TextStim(win=win, color=[1,1,1])
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
     
-
 
 txt_1 = 'Welcome to the Experiment'
 txt_2 = u'In this task you will be presented with a set of seemingly random moving dots.'
@@ -80,12 +78,8 @@ Orientations =  [0.0,90.0] # of the informative cue stimuli
 # to keep track of time
 clock = core.Clock()
 
-
-
-
-
 # create the dot updating class 
-DOT_UPD = RDM_kinematogram()
+DOT_UPD = ds.RDM_kinematogram()
 color, coord= DOT_UPD.create_dots()
 
 # create the dot stimuli 
@@ -248,10 +242,9 @@ DATE = inp.data[5]
 
 #LOAD TRIALS
 
-#lis = ...
-
-
-
+direct = r'/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/Lists/'
+lis = pd.read_csv(direct +'PriorRDM_PilotList_' + str(ID)  +'.csv')
+   
 # Initialize data saving
 # Insert columns
 TRIAL ={'Trial_nr': None , 
@@ -275,7 +268,7 @@ TRIAL ={'Trial_nr': None ,
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 # start writing
-wrt = task_writer(save_path, TRIAL)
+wrt = tw.task_writer(save_path, TRIAL)
 
 # Create Trial dictionary
 BaseInf =  {'Gender': inp.data[1],

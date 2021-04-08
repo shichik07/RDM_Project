@@ -123,22 +123,22 @@ class GetBlockList(object):
         return coh_two
     
 #%% How to use
-a = GetBlockList()
-BiasC =  [0,1]
-colors = [[ -1,0,1],[ 1,0,1]], [[ 3,3,3],[ 5,5,5]], [[ 7,7,7],[ 1,1,1]], [[ 9,9,9],[ 2,2,2]]
-colors2 = [None]*4
-for ix,col in enumerate(colors): 
-    colors2[ix] = a.reverse_color(col)
+# a = GetBlockList()
+# BiasC =  [0,1]
+# colors = [[ -1,0,1],[ 1,0,1]], [[ 3,3,3],[ 5,5,5]], [[ 7,7,7],[ 1,1,1]], [[ 9,9,9],[ 2,2,2]]
+# colors2 = [None]*4
+# for ix,col in enumerate(colors): 
+#     colors2[ix] = a.reverse_color(col)
 
 
-# for x in y:
-    # bs = BiasC[x%2]
-    # if x%4 <=2:
-    #     col = colors
-    # else:
-    #     col = colors2
-    # lis= a.init_list(3, bs)
+# # for x in y:
+#     # bs = BiasC[x%2]
+#     # if x%4 <=2:
+#     #     col = colors
+#     # else:
+#     #     col = colors2
+#     # lis= a.init_list(3, bs)
 
-lis= a.init_list(colors, BiasC[0])
-lis2= a.init_list(colors2, BiasC[0])
+# lis= a.init_list(colors, BiasC[0])
+# lis2= a.init_list(colors2, BiasC[0])
 
