@@ -16,6 +16,7 @@ randomization structure is inspired by...
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
+import random
 from PriorPD.Task_func import trial_writer as tw
 from PriorPD.TwoDotRDM import dot_stimuli as ds
 
@@ -129,8 +130,6 @@ def instruction_show(text):
          core.quit()
     return key
 
-for trl_ind, trial_info in lis.iterrows():
-    pass
 
 def block_loop(trials):
     
