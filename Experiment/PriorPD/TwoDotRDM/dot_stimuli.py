@@ -69,6 +69,10 @@ class RDM_kinematogram(object):
         Reason being, we want overall coherence to be the same for one and two groups in our
         paradigm. As such coherence is defined with respect to two groups (quite arbitrary, I know).
         """
+        if self.alg = "BM":
+            # we only show "one" dot pop not three - hence we need three times the number of dots
+            self.n_dot = self.n_dot*3 
+        
         self.speed = dot_speed # dot displacement
         self.center = center
         self.groups = groups # number of dot groups
@@ -83,6 +87,7 @@ class RDM_kinematogram(object):
         ''' Outputs a matrix that contains information of each dot by column: 
         indices, population-membership, one column for each respective RGB value 
         and x,y coordinates of each dot'''
+       
         # first we create three sequences by creating a three dimensional array
         self.ind = np.arange(0,self.n_dot,1)
         # add a grouping variable and color codes
