@@ -13,6 +13,8 @@ randomization structure is inspired by...
 
 
 """
+import os
+os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment')
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
@@ -68,14 +70,15 @@ text_fin = u'You have finished the end of the Experiment. Thank you for your par
 clock = core.Clock()
 
 # create the dot updating class 
-DOT_UPD = ds.RDM_kinematogram()
-DOT_UPD.alg = ALG
+DOT_UPD = ds.RDM_kinematogram(alg= ALG)
+
 color, coord= DOT_UPD.create_dots()
 
 # create the dot stimuli 
 dot_stim= visual.ElementArrayStim(
     win=win,
     units=UNITS,
+    colorSpace = 'rgb255',
     nElements=20,
     elementTex=None,
     elementMask="circle",
@@ -123,14 +126,14 @@ def instruction_show(text):
 def block_loop(trials):
     for trl_ind, trial_info in trials.iterrows():
         #PRESENT FIXATION
+        ISI = 1.2, 1.4
         # Interstimulus interval in frames?
         ISI_1 = round(random.uniform(ISI[0], ISI[1]),2) 
-        ISI_2 = round(random.uniform(ISI[0], ISI[1]),2) #get another random interval
         
         fixation.draw()
         win.flip()
         ISI = core.StaticPeriod(screenHz=REFRESH)
-        ISI.start(ISI_2)  # start a period of 0.5s
+        ISI.start(ISI_1q)  # start a period of 0.5s
         ''' Here we could load a cue '''
         # update the trial parameter
         DOT_UPD.update_params(direction = trial_info.Direction, 
@@ -143,7 +146,7 @@ def block_loop(trials):
               'Direction':  trial_info.Direction,
               'Block': trial_info.Block,
               'Colors': trial_info.Colors,
-              'ISI': [ISI_1, ISI_2],
+              'ISI': [ISI_1],
               'Coherence_total': trial_info.Coherence_total,
               'Response': None,
               'Correct': 0, #default is incorrect
@@ -153,29 +156,6 @@ def block_loop(trials):
         color, coord= DOT_UPD.create_dots()
        
         #stim.image = 'largeFile.bmp'  # could take some time
-        ISI.complete()  # finish theevent.clearEvents()
-        
-        #PRESENT CUE
-        if trial_info.Condition == EXP_CON[0] or trial_info.Condition == EXP_CON[1]:
-            for frame in range(CUE_FRAMES):
-                circle.draw()
-                win.flip()
-        elif trial_info.Condition == EXP_CON[2]:
-            grating.ori = CUE_ORI[0]
-            for frame in range(CUE_FRAMES):          
-                grating.draw()
-                win.flip()
-        elif trial_info.Condition == EXP_CON[3]:
-            grating.ori = CUE_ORI[1]
-            for frame in range(CUE_FRAMES):
-                grating.draw()
-                win.flip()
-            
-        #PRESENT FIXATION Number 2
-        fixation.draw()
-        win.flip()
-        ISI = core.StaticPeriod(screenHz=REFRESH)
-        ISI.start(ISI_2)  # start a period of 0.5s
         ISI.complete()  # finish theevent.clearEvents()
         
         #PRESENT STIM
