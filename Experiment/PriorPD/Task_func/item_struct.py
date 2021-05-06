@@ -5,115 +5,313 @@ Created on Mon Mar 22 13:42:04 2021
 
 @author: jules
 """
-import random
 import pandas as pd
 import numpy as np
+import random
+# import os
+
+# os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment')
+from params import * # import fixed parameter 
 
 
-class GetBlockList(object):
-    def __init__(self):
+class GetBlockList():
+    '''
+        Class which returns a the unrandomized practice and experimental Item Lists.
+        Not very flexible and hardcoded in part. Only intended to be used in our experiment.
+        Sorry for the mess.
+    
+            '''
+    def __init__(self, Col_con):
         # Define List parameter
-        self.BlockBias = [1,3,5], [0,2,4]
-        self.Trial_Nr = 36
-        self.Coherence_Levels = [0, 0.1, 0.2, 0.5]
-        self.Conditions = ['Mono', 'Di_null', 'Di_part', 'Di_full']
-        self.Directions = ['left', 'right']
-        self.minorDir = ['left', 'right']
-        self.Block = 6
-        self.proportion = [0.2, 1.8]
+        self.Trial_Nr = TASK_NR
+        self.Practice_Nr = PRACTICE_NR
+        self.Coherence_Levels = COHERENCE
+        self.Conditions = EXP_CON
+        self.Directions = RESPONSE_KEYS
+        self.Block = BLOCK_NRS
+        self.proportion = PROPORTION 
+        self.Color = Col_con 
         self.Trial_total = self.Trial_Nr* len(self.Conditions)*len(self.Coherence_Levels)
-        # repeats per unique individual item
-        self.reps_itm = 3
+        self.Total_prtc = self.Practice_Nr*4
         # Create Item Pandas frame
         self.Items = pd.DataFrame({ 'Condition': [None]*self.Trial_total, 
                                        'Coherence': [None]*self.Trial_total,
                                     'Colors': [None]*self.Trial_total,
                                          'Direction': [None]*self.Trial_total,
                                          'Block': [None]*self.Trial_total,
-                                  'Coherence_total': [None]*self.Trial_total})
+                                  'Coherence_total': [None]*self.Trial_total,
+                                 'Exp': [None]*self.Trial_total,
+                             'ColorSwitch': [None]*self.Trial_total})
+        self.Practice = pd.DataFrame({ 'Condition': [None]*self.Total_prtc, 
+                                       'Coherence': [None]*self.Total_prtc,
+                                    'Colors': [None]*self.Total_prtc,
+                                         'Direction': [None]*self.Total_prtc,
+                                         'Block': [None]*self.Total_prtc,
+                                  'Coherence_total': [None]*self.Total_prtc,
+                                 'Exp': [None]*self.Total_prtc,
+                             'ColorSwitch': [None]*self.Total_prtc})
         
-    def init_list(self, colors, Block_order):
-        # determine in which manner we bias our list allocation (to reach the 75|25 color imbalance)
-        if Block_order == 1:
-            bias_con = self.BlockBias[1]
-        elif Block_order == 0:
-             bias_con = self.BlockBias[0]
-        else: 
-            raise ValueError('Please specify Block_order as either 0 or 1') 
-            
-        #set color
-        Color = pd.Series(colors)
-
-            
-        # important to shuffle coherence values
-        random.shuffle(self.Coherence_Levels)
-        ind = 0
-        for blck in range(self.Block): 
-            # important to shuffle coherence values
-            random.shuffle(self.Coherence_Levels)
-            for con_idx, con in enumerate(self.Conditions):
-                for coh in self.Coherence_Levels:
-                    coh_count = 0
-                    for resp in self.Directions:
-                        for rp in range(self.reps_itm):
-                            self.Items.loc[ind, 'Block'] = blck
-                            self.Items.loc[ind, 'Condition'] = con
-                            self.Items.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
-                            self.Items.loc[ind, 'Coherence_total'] = coh
-                            self.Items.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
-                            self.Items.at[ind, 'Colors'] = Color[con_idx]
-                          
-                            if con == self.Conditions[3]:
-                                #for the fully informative condition 75% of the items will be switched
-                                if coh_count <= 3:
-                                    #Swap the colors
-                                    self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                            elif con == self.Conditions[2]:
-                                #for the partially informative condition (50% of the items are switched)
-                                if coh_count <= 2:
-                                    #Swap Colors
-                                    self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                    
-                            # To make the last two directions random - otherwise we will have the low probability relevant condition more often left than right moving
-                            # for the fully informative condition only. for the partially informative condition we have to do the same for the third and sxth index
-                            if con == self.Conditions[3]:
-                                if coh_count == 4:
-                                    random.shuffle(self.minorDir)
-                                    self.Items.loc[ind, 'Direction'] = self.minorDir[0]
-                                elif coh_count == 5:
-                                    #here take the other direction helps us to get a more unbiased list for each participant
-                                    self.Items.loc[ind, 'Direction'] = self.minorDir[1]
-                            elif con == self.Conditions[2]:
-                                #for the partially informative condition
-                                if coh_count == 2:
-                                    random.shuffle(self.minorDir)
-                                    self.Items.loc[ind, 'Direction'] = self.minorDir[0]
-                                elif coh_count == 5:
-                                    #here take the other direction helps us to get a more unbiased list for each participant
-                                    self.Items.loc[ind, 'Direction'] = self.minorDir[1]
-                            
-                            # Here we make sure that overall we get to our 75%|25% major color distinction per majority coherence
-                            # in an approximately random manner
-                            if con == self.Conditions[3]:
-                                if blck in bias_con and coh_count == 4:
-                                    if coh == self.Coherence_Levels[1] or coh == self.Coherence_Levels[3]:
-                                        self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                elif blck not in bias_con and coh_count == 4:
-                                    if coh == self.Coherence_Levels[0] or coh == self.Coherence_Levels[2]:
-                                        self.Items.at[ind, 'Colors'] = self.reverse_color(self.Items.at[ind, 'Colors'])
-                                    
-                            # Update indices
-                            ind +=1
-                            coh_count += 1
-        # Have to copy - otherwise everytime we create a new list all former list will be the same. Prob would have been smarter to create a new pandas frame every time                    
-        Item_list = self.Items.copy()
-        return Item_list
+    def generate_items(self):
+        '''
+        Function which operates on the initialized item list of the class.
+        Create the basic balanced item combination for all experimental conditions.
     
+        Parameters
+        ----------
+        
+        Returns
+        -------
+
+            '''
+        # create all possible Item combinations
+        ind = 0
+        for con_idx, con in enumerate(self.Conditions):
+            for coh in self.Coherence_Levels:
+                for rep in range(self.Trial_Nr):
+                    self.Items.loc[ind, 'Condition'] = con
+                    self.Items.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                    self.Items.loc[ind, 'Coherence_total'] = coh
+                    self.Items.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
+                    self.Items.at[ind, 'Colors'] = self.Color[con_idx]
+                    ind += 1
+                    
+    def init_list(self):
+        '''
+        Function which calls individual class functions to generate the item and
+        practice list, and functions to get balanced blocks for the experimental
+        parts and implement the color ration manipulations.
+    
+        Parameters
+        ----------
+        
+        Returns
+        -------
+        All : Pandas DataFrame - 
+            A DataFrame containing both all practice and experimental items
+    
+            '''
+        #get the basic item list
+        self.generate_items()
+        # allocate items to experimental parts and blocks
+        self.get_blocks()
+        # put in informative ratios for colors
+        self.color_ratios()
+        # Generate the practice items
+        self.generate_practice()
+        # Put items and practice together
+        All = pd.concat([self.Items, self.Practice])
+        return All
+    
+        
+    def get_blocks(self):
+        '''
+        Function which operates on the initialized item list of the class.
+        Creates the balanced blocks for each experimental part.
+    
+        Parameters
+        ----------
+        
+        Returns
+        -------
+    
+            '''
+        for con in self.Conditions:
+            for coh in self.Coherence_Levels:
+                con_in = self.Items.index[(self.Items['Condition'] == con) & (self.Items['Coherence_total'] == coh)] 
+                if con == self.Conditions[0] or con == self.Conditions[1]:
+                    con_in = self.Items.index[(self.Items['Condition'] == con) & (self.Items['Coherence_total'] == coh)] 
+                    # Assort items to individual blocks and split between full and partially informative
+                    blocks = np.repeat(self.Block, [len(self.Block)], axis=0)
+                    random.shuffle((self.Block))
+                    self.Items.loc[con_in[0:int(self.Trial_Nr/2)], 'Block'] = np.hstack((blocks,np.array(self.Block)))
+                    self.Items.loc[con_in[0:int(self.Trial_Nr/2)], 'Exp'] = 'Exp_Full' 
+                    random.shuffle((self.Block))
+                    self.Items.loc[con_in[int(self.Trial_Nr/2): self.Trial_Nr], 'Block'] = np.hstack((blocks,np.array(self.Block)))
+                    self.Items.loc[con_in[int(self.Trial_Nr/2): self.Trial_Nr], 'Exp'] = 'Exp_Part'
+                else:
+                    blocks = np.repeat(self.Block, [int(self.Trial_Nr/len(self.Block))], axis=0)
+                    self.Items.loc[con_in, 'Block'] = blocks
+                    if con == self.Conditions[2]:
+                         self.Items.loc[con_in, 'Exp'] = 'Exp_Part'
+                    else:
+                         self.Items.loc[con_in, 'Exp'] = 'Exp_Full'
+    
+    def generate_practice(self):
+        '''
+        Function which calls individual class functions to generate the practice 
+        trials for both the partial informative and fully informative experimental part.
+
+        Parameters
+        ----------
+        
+        Returns
+        -------
+            '''
+        self.partial_practice()
+        self.full_practice()
+    
+    def full_practice(self):
+        '''
+        Function which operates on the initialized item practice List of the class.
+        Create the basic balanced item combination the fully informative practice items.
+    
+        Parameters
+        ----------
+        
+        Returns
+        -------
+
+            '''
+        con = self.Conditions[3]
+        ind = 0
+        # first Part of the Practice
+        for coh in self.Coherence_Levels:
+                for rep_idx, rep in enumerate(range(int(self.Practice_Nr/4 + 4))):
+                    self.Practice.loc[ind, 'Condition'] = con
+                    self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                    self.Practice.loc[ind, 'Coherence_total'] = coh
+                    self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
+                    self.Practice.at[ind, 'Colors'] = self.Color[3]
+                    self.Practice.loc[ind, 'Exp']  = 'Exp_Full' 
+                    if rep_idx >=8:
+                        self.Practice.loc[ind, 'Block'] ='Practice_2'
+                    else:
+                        self.Practice.loc[ind, 'Block'] ='Practice_1'
+                    ind += 1
+        # second Part of the practice
+        uninformative = self.Conditions[0:2]
+        for con_idx, con in enumerate(uninformative):
+            for  coh in self.Coherence_Levels:
+                    for rep in range(2):
+                        self.Practice.loc[ind, 'Condition'] = con
+                        self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                        self.Practice.loc[ind, 'Coherence_total'] = coh
+                        self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
+                        self.Practice.at[ind, 'Colors'] = self.Color[con_idx]
+                        self.Practice.loc[ind, 'Exp']  = 'Exp_Full' 
+                        self.Practice.loc[ind, 'Block'] ='Practice_2'
+                        ind += 1
+    
+    def partial_practice(self):
+        '''
+        Function which operates on the initialized item practice List of the class.
+        Create the basic balanced item combination the partially informative practice items.
+    
+        Parameters
+        ----------
+        
+        Returns
+        -------
+
+            '''
+        con = self.Conditions[2]
+        ind = int(self.Total_prtc/2)  
+        for coh in self.Coherence_Levels:
+                for rep_idx, rep in enumerate(range(int(self.Practice_Nr/4 + 4))):
+                    self.Practice.loc[ind, 'Condition'] = con
+                    self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                    self.Practice.loc[ind, 'Coherence_total'] = coh
+                    self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
+                    self.Practice.at[ind, 'Colors'] = self.Color[2]
+                    self.Practice.loc[ind, 'Exp']  = 'Exp_Part' 
+                    if rep_idx <=3:
+                        self.Practice.loc[ind, 'ColorSwitch']= 'True'   
+                    if rep_idx >=8:
+                        self.Practice.loc[ind, 'Block'] ='Practice_2'
+                        if rep_idx < 10:
+                            self.Practice.loc[ind, 'ColorSwitch']= 'True'   
+                    else:
+                        self.Practice.loc[ind, 'Block'] ='Practice_1'
+                    ind += 1     
+        # switch color directions
+        Swtch_idx = self.Practice.index[(self.Practice['ColorSwitch'] == 'True')] 
+        self.Practice.Colors.loc[Swtch_idx] = self.Practice.Colors.loc[Swtch_idx].apply(lambda x: self.reverse_color(x))
+        # second Part of the practice
+        uninformative = self.Conditions[0:2]
+        for con_idx, con in enumerate(uninformative):
+            for coh in self.Coherence_Levels:
+                    for rep in range(2):
+                        self.Practice.loc[ind, 'Condition'] = con
+                        self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
+                        self.Practice.loc[ind, 'Coherence_total'] = coh
+                        self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
+                        self.Practice.at[ind, 'Colors'] = self.Color[con_idx]
+                        self.Practice.loc[ind, 'Exp']  = 'Exp_Part' 
+                        self.Practice.loc[ind, 'Block'] ='Practice_2'
+                        ind += 1
+                    
+    def color_ratios(self):
+        '''
+        Function which operates on the initialized item list of the class.
+        Creates the proabilistic informativeness of the practiced color combinations,
+        i.e. colors are switched with regards to coherence on part of the items.
+        50/50 for the partially informative condition and 80/20 for the fully 
+        informative condition.
+    
+        Parameters
+        ----------
+        
+        Returns
+        -------
+    
+            '''
+        for con in self.Conditions[2:]:
+            for coh in self.Coherence_Levels:
+                for blck in self.Block:
+                    con_in = self.Items.index[(self.Items['Condition'] == con) & (self.Items['Coherence_total'] == coh) & (self.Items['Block'] == blck)] 
+                    if con == self.Conditions[2]:
+                        if blck%2 == 0:
+                            #switch colors index 0:5  and 5:9 so we make sure we have equal proportions left 
+                            # and right over the whole experiment
+                            self.Items.Colors.loc[con_in[0:5]] = self.Items.Colors.loc[con_in[0:5]].apply(lambda x: self.reverse_color(x))
+                            self.Items.ColorSwitch.loc[con_in[0:5]] = 'True' # not really true for partially informative but important
+                        else:
+                            # and 5:9
+                            self.Items.Colors.loc[con_in[5:10]] = self.Items.Colors.loc[con_in[5:10]].apply(lambda x: self.reverse_color(x))
+                            self.Items.ColorSwitch.loc[con_in[5:10]] = 'True'
+                    else:
+                        # switch colors for the first two indices only (80/20)
+                        self.Items.Colors.loc[con_in[0:2]] = self.Items.Colors.loc[con_in[0:2]].apply(lambda x: self.reverse_color(x))
+                        self.Items.ColorSwitch.loc[con_in[0:2]] = 'True'    
+                        
+                                   
     def reverse_color(self,entry):
+        '''
+        Function revereses the order of an entered list, in case of the class, color
+        ----------
+        
+        
+        Parameters
+        ----------
+        entry: list - colors of the items
+        
+        Returns
+        -------
+        col :  list - colors of the items in reversed order
+            '''
         col = entry[::-1]
         return col
+                
+                    
     
     def translate_coherence(self, condition, coherence):
+        '''
+        Function which calculates the total coherence of an RDM trial onto two
+        independent dot groups. Distinguishes conditions - non-informative conditions
+        have equal proportions, informative conditions have 1:1 coherence per group,
+        informative conditions have 1:9 coherence per group.
+        ----------
+        
+        
+        Parameters
+        ----------
+        conditio: string - Name of the experimental condition in question
+        coherence: float - Total Coherence value per trial
+        
+        Returns
+        -------
+        coh_two :  list - two coherence values for each dot group
+            '''
         # if both dot pops contain the same amount of info or are colored the same
         if condition ==  self.Conditions[0] or condition == self.Conditions[1]:
             coh_two = [[coherence, coherence]]
@@ -121,24 +319,8 @@ class GetBlockList(object):
             # if one of the two dot pops has to contain more info than the other
             coh_two = [[round(coherence*self.proportion[0],2), round(coherence*self.proportion[1],2)]]
         return coh_two
-    
 #%% How to use
-# a = GetBlockList()
-# BiasC =  [0,1]
-# colors = [[ -1,0,1],[ 1,0,1]], [[ 3,3,3],[ 5,5,5]], [[ 7,7,7],[ 1,1,1]], [[ 9,9,9],[ 2,2,2]]
-# colors2 = [None]*4
-# for ix,col in enumerate(colors): 
-#     colors2[ix] = a.reverse_color(col)
 
-
-# # for x in y:
-#     # bs = BiasC[x%2]
-#     # if x%4 <=2:
-#     #     col = colors
-#     # else:
-#     #     col = colors2
-#     # lis= a.init_list(3, bs)
-
-# lis= a.init_list(colors, BiasC[0])
-# lis2= a.init_list(colors2, BiasC[0])
+a = GetBlockList(DOT_G_COL) # Indicate Color Set
+List = a.init_list() #create the list
 
