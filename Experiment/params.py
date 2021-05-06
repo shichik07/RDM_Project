@@ -22,9 +22,15 @@ REFRESH = 60
 FIELD_SIZE = 5.0
 ALG =  'MN'
 DOT_SPEED = 8
-DOT_SIZE = 0.02
+DOT_SIZE = 0.2
 # Colors of all dot Groups
-DOT_G_COL = [[ 1,1,1],[ 1,1,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]]
+green = [85,188,75]
+blue = [81, 186, 255]
+red = [255, 121, 81]
+yellow =[214,165,0]
+
+#DOT_G_COL = [[ 1,1,1],[ 1,1,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]]
+DOT_G_COL = [blue, blue], [blue, yellow], [blue, red], [blue, green]
 
 # 'dot_density': 16.7, 
 # 'fieldsize' = [14.6, 14.6], 
@@ -56,6 +62,11 @@ GUI_INP = {'ProbandenNr':'',
 
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
+BLOCK_NRS = [0,1,2,3]
+COHERENCE = [0.0, 0.1, 0.2, 0.5]
+PROPORTION = [0.2, 1.8]
+TASK_NR = 40 # defined with respect to each coherence level
+PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
 
 # TEXT PARAMS
 TEXT_COL = [1,1,1]
