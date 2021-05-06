@@ -13,21 +13,22 @@ sys.path
 
 # Sample to write the task List
 from PriorPD.Task_func import item_struct as itm
+from params import * # import fixed parameter 
+
+
 
 # get class and variables
-bl_lists = itm.GetBlockList()
-BiasC =  [0,1]
-colors = [[ -1,0,1],[ 1,0,1]], [[ 1,0,0],[0,0,1]], [[ 1,0,0],[0,0,1]], [[ 1,0,0],[0,0,1]]
-
+bl_lists = itm.GetBlockList(DOT_G_COL)
 
 for i in range(10):
     # generate the list
-    items = bl_lists.init_list(colors, BiasC[0])
+    items = bl_lists.init_list()
     
     # randomize items per block
     items = items.sample(frac=1)
-    items = items.sort_values(by=['Block'])
+    items = items.sort_values(by=['Exp', 'Block'])
     items = items.reset_index()
+    items = items.drop(['index'], axis = 1) # get rid of the extra index column
     
     # save files
     group = 'Pilot'
