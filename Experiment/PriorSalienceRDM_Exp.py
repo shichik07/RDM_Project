@@ -122,6 +122,10 @@ def instruction_show(text):
          core.quit()
     return key
 
+def instruction_loop(instructions):
+    for inst in instructions:
+        instruction_show(inst)
+        
 
 def block_loop(trials):
     for trl_ind, trial_info in trials.iterrows():
@@ -156,7 +160,6 @@ def block_loop(trials):
         # create a fresh instance for the dots
         color, coord= DOT_UPD.create_dots()
        
-        #stim.image = 'largeFile.bmp'  # could take some time
         ISI.complete()  # finish theevent.clearEvents()
         
         #PRESENT STIM
@@ -279,11 +282,22 @@ Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() #
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
 for exp in Experimental_Parts:
     # Start the Practice Session
-    for prac in Practice:
+    # Get the correct instructions
+    if exp == 'Exp_Full': 
+        prtc_inst = PRACTICE_FULL
+        task_inst = EXP_FULL 
+    else:
+        prtc_inst = PRACTICE_PART
+        task_inst = EXP_PART
+    for prac_idx, prac in enumerate(Practice):
+        instruction_loop(prtc_inst[prac_idx]) #display the practice instructions
         Prtc_trials = lis.loc[(lis.Block == prac) and (lis.Exp == exp)] # Get practice trials
         block_loop(Prtc_trials) #run practice
     Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
-    for block in Task: 
+    instruction_loop(task_inst) # display the task instructions
+    for blc_idx, block in enumerate(Task):
         trials = lis.loc[lis.Block == block] # get Block trials
         block_loop(trials) #run block
-instruction_show(text_fin) # Finish Message
+        if blc_idx == len(block):
+            instruction_show(BLOCK_INSTR)
+instruction_show(END) # Finish Message
