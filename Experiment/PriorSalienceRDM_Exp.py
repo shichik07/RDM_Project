@@ -126,14 +126,13 @@ def instruction_show(text):
 def block_loop(trials):
     for trl_ind, trial_info in trials.iterrows():
         #PRESENT FIXATION
-        ISI = 1.2, 1.4
         # Interstimulus interval in frames?
-        ISI_1 = round(random.uniform(ISI[0], ISI[1]),2) 
+        ISI_1 = round(random.uniform(INTERSTIMI[0], INTERSTIMI[1]),2) 
         
         fixation.draw()
         win.flip()
         ISI = core.StaticPeriod(screenHz=REFRESH)
-        ISI.start(ISI_1q)  # start a period of 0.5s
+        ISI.start(ISI_1)  # start a period of 0.5s
         ''' Here we could load a cue '''
         # update the trial parameter
         DOT_UPD.update_params(direction = trial_info.Direction, 
@@ -150,7 +149,9 @@ def block_loop(trials):
               'Coherence_total': trial_info.Coherence_total,
               'Response': None,
               'Correct': 0, #default is incorrect
-              'RT': None}
+              'RT': None,
+              'Exp': trial_info.Exp,
+              'ColorSwitch': trial_info.ColorSwitch}
             
         # create a fresh instance for the dots
         color, coord= DOT_UPD.create_dots()
@@ -203,20 +204,20 @@ GUI_INP['dateStr'] = data.getDateStr()  # add the current time
 inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
 
 # get class and variables
-bl_lists = itm.GetBlockList()
-BiasC =  [0,1]
-colors = DOT_G_COL
+bl_lists = itm.GetBlockList(DOT_G_COL)
+
 
 
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
 # generate the list
-lis = bl_lists.init_list(colors, BiasC[0])
+lis = bl_lists.init_list()
 # randomize items per block
 lis = lis.sample(frac=1)
-lis = lis.sort_values(by=['Block'])
+lis = lis.sort_values(by=['Exp', 'Block'])
 lis = lis.reset_index()
-
+lis = lis.drop(['index'], axis = 1) # get rid of the extra index column
+    
 # Initialize data saving
 # Insert columns
 TRIAL ={'Trial_nr': None , 
@@ -236,6 +237,8 @@ TRIAL ={'Trial_nr': None ,
               'Handedness': inp.data[3],
               'Part_Nr': inp.data[4],
               'Coherence_total':None,
+              'Exp':None,
+              'ColorSwitch':None,
               'Date': inp.data[5]}
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
@@ -271,9 +274,16 @@ wrt.start()
 
 
 # start Block
-blocks = lis.Block.unique()
-for block in blocks:
-    trials = lis.loc[lis.Block == block]
-    block_loop(trials)
-    
-instruction_show(text_fin)
+Experimental_Parts = lis.Exp.unique() # Get Both Experimental Parts
+Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
+Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
+for exp in Experimental_Parts:
+    # Start the Practice Session
+    for prac in Practice:
+        Prtc_trials = lis.loc[(lis.Block == prac) and (lis.Exp == exp)] # Get practice trials
+        block_loop(Prtc_trials) #run practice
+    Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
+    for block in Task: 
+        trials = lis.loc[lis.Block == block] # get Block trials
+        block_loop(trials) #run block
+instruction_show(text_fin) # Finish Message
