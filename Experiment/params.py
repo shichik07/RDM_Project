@@ -28,9 +28,10 @@ green = [85,188,75]
 blue = [81, 186, 255]
 red = [255, 121, 81]
 yellow =[214,165,0]
-
 #DOT_G_COL = [[ 1,1,1],[ 1,1,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]], [[ 0.9,-1,-1],[-0.73,0,1]]
 DOT_G_COL = [blue, blue], [blue, yellow], [blue, red], [blue, green]
+PRTC_FULL_COL = [green, green]
+
 
 # 'dot_density': 16.7, 
 # 'fieldsize' = [14.6, 14.6], 
@@ -49,7 +50,7 @@ CIRCLE_COL = [0, 0, 0]
 
 
 # TRIAL PARAMS
-ISI = [0.8,1.2]
+INTERSTIMI= [0.8,1.2]
 FRAMES = 180
 RESPONSE_KEYS = ['left', 'right']
 CONTINUE_KEYS = ['return', 'space']
@@ -70,3 +71,5 @@ PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
 
 # TEXT PARAMS
 TEXT_COL = [1,1,1]
+
+# INSTRUCTIONS PRATICE

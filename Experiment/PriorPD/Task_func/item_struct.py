@@ -31,6 +31,7 @@ class GetBlockList():
         self.Block = BLOCK_NRS
         self.proportion = PROPORTION 
         self.Color = Col_con 
+        self.Prtc_col = PRTC_FULL_COL 
         self.Trial_total = self.Trial_Nr* len(self.Conditions)*len(self.Coherence_Levels)
         self.Total_prtc = self.Practice_Nr*4
         # Create Item Pandas frame
@@ -171,12 +172,14 @@ class GetBlockList():
                     self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
                     self.Practice.loc[ind, 'Coherence_total'] = coh
                     self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
-                    self.Practice.at[ind, 'Colors'] = self.Color[3]
+                    
                     self.Practice.loc[ind, 'Exp']  = 'Exp_Full' 
                     if rep_idx >=8:
                         self.Practice.loc[ind, 'Block'] ='Practice_2'
+                        self.Practice.at[ind, 'Colors'] = self.Color[3]
                     else:
                         self.Practice.loc[ind, 'Block'] ='Practice_1'
+                        self.Practice.at[ind, 'Colors'] = self.Prtc_col # uni colored items for this practice
                     ind += 1
         # second Part of the practice
         uninformative = self.Conditions[0:2]
