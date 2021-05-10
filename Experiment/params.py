@@ -20,9 +20,15 @@ REFRESH = 60
 
 # DOT PARAMS
 FIELD_SIZE = 5.0
-ALG =  'MN'
+ALG =  'BM' #'MN'
 DOT_SPEED = 8
 DOT_SIZE = 0.2
+#Number of dots
+if ALG == 'MN':
+    DOT_N = 20
+else:
+    DOT_N = 60
+
 # Colors of all dot Groups
 green = [85,188,75]
 blue = [81, 186, 255]
