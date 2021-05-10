@@ -129,6 +129,7 @@ def instruction_loop(instructions):
 
 def block_loop(trials):
     for trl_ind, trial_info in trials.iterrows():
+        wrt.start()
         #PRESENT FIXATION
         # Interstimulus interval in frames?
         ISI_1 = round(random.uniform(INTERSTIMI[0], INTERSTIMI[1]),2) 
@@ -190,8 +191,9 @@ def block_loop(trials):
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
         
-        wrt.update(new_entries)    
-    wrt.finish() # save intermediate results
+        wrt.update(new_entries)
+        wrt.finish()
+    #wrt.finish() # save intermediate results
     instruction_show(txt_blcP) #BLOCKBREAK SCREEN
      
     
@@ -262,18 +264,6 @@ wrt.set_file()
 wrt.finish()
 
 win.flip()
-instruction_show(txt_1)
-instruction_show(txt_2)
-instruction_show(txt_3)
-instruction_show(txt_4)
-instruction_show(txt_5)
-instruction_show(txt_6)
-instruction_show(txt_7)
-instruction_show(txt_8)
-
-
-## Initialize data saving
-wrt.start()
 
 
 # start Block
@@ -291,13 +281,13 @@ for exp in Experimental_Parts:
         task_inst = EXP_PART
     for prac_idx, prac in enumerate(Practice):
         instruction_loop(prtc_inst[prac_idx]) #display the practice instructions
-        Prtc_trials = lis.loc[(lis.Block == prac) and (lis.Exp == exp)] # Get practice trials
+        Prtc_trials = lis.loc[(lis.Block == prac) & (lis.Exp == exp)] # Get practice trials
         block_loop(Prtc_trials) #run practice
     Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
     instruction_loop(task_inst) # display the task instructions
     for blc_idx, block in enumerate(Task):
-        trials = lis.loc[lis.Block == block] # get Block trials
+        trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
         block_loop(trials) #run block
-        if blc_idx == len(block):
+        if blc_idx == len(Task):
             instruction_show(BLOCK_INSTR)
 instruction_show(END) # Finish Message
