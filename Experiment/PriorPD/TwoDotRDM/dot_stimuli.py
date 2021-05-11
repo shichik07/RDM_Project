@@ -11,6 +11,7 @@ Created on Tue May  5 11:20:31 2020
 import random
 import numpy as np
 from numpy.matlib import repmat
+from params import * # import fixed parameter 
 
 
 
@@ -21,22 +22,16 @@ class RDM_kinematogram(object):
     different coherence levels. For a more thorough overview of advantages and 
     disadvantages see Pilly and Seitz 2009"""
     def __init__(self, 
-                 alg='MN', 
-                 dot_speed = 8,  
-                 dot_density = 16.7, 
-                 fieldsize = [14.8, 14.8], 
-                 center = [0,0],  
-                 groups = 2, 
-                 t_group = 1,
-                 rgbs = [[ -1,0,1],[ 1,0,1]], 
-                 frameRate = 61):
+                 alg=ALG, 
+                 dot_speed = DOT_SPEED,  
+                 dot_density = DOT_DENSITY, 
+                 fieldsize = FIELD_SIZE_DOT, 
+                 center = CENTER,  
+                 groups = GROUP_NR, 
+                 rgbs = PRTC_FULL_COL, # just default, will not be shown
+                 frameRate = REFRESH):
         """ Initialize with algorithm choice """
-        if alg == 'MN':
-            # Movshon Newsome
-            self.rdm_alg = 'MN'
-        elif alg == 'BM':
-            self.rdm_alg = 'BM' # not implemented yet - not sure if I will have the time
-        else:
+        if alg != 'MN' and alg != 'BM':
             raise ValueError('The RDM algorithm you requested does not exist. '
                              'Please specify either "MN" for the Movshon-Newsome '
                              'algorithm, or "BM" for the Brownian motion algorithm') 
@@ -45,14 +40,12 @@ class RDM_kinematogram(object):
         # which is devisible by 6 (2 dot groups with three interlaced sequences)
         if groups == 2:
             self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
-            self.t_group = t_group # target group either zero or one
             if (self.n_dot%6) != 0:
                 raise ValueError('Because you want to display two distinct dot_populations'
                                  ' with three distinct presentation sequences, the total'
                                  ' number of dots must be divisible by 6.')
         elif groups == 1:
             self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
-            self.t_group = 0 
             if self.n_dot%6 != 0:
                 raise ValueError('Because you want to display one dot_population'
                                  ' with three distinct presentation sequences, the total'

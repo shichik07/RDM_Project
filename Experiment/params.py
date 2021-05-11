@@ -19,10 +19,16 @@ BG_COLOR = [-1,-1,-1]
 REFRESH = 60
 
 # DOT PARAMS
-FIELD_SIZE = 5.0
+FIELD_SIZE = 5.0 # Field size for the array object
 ALG =  'BM' #'MN'
 DOT_SPEED = 8
 DOT_SIZE = 0.2
+DOT_DENSITY = 16.7
+FIELD_SIZE_DOT =  [14.8, 14.8] # Field Size for the DOt Updates
+CENTER = [0,0]
+GROUP_NR = 2 #default, cannot be modified yet
+
+
 #Number of dots
 if ALG == 'MN':
     DOT_N = 20
