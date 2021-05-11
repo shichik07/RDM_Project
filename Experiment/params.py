@@ -16,7 +16,7 @@ WIDTH = 31
 DISTANCE = 60
 UNITS = 'deg'
 BG_COLOR = [-1,-1,-1]
-REFRESH = 60
+REFRESH = 61
 
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
@@ -27,7 +27,6 @@ DOT_DENSITY = 16.7
 FIELD_SIZE_DOT =  [14.8, 14.8] # Field Size for the DOt Updates
 CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
-
 
 #Number of dots
 if ALG == 'MN':
@@ -45,14 +44,6 @@ DOT_G_COL = [blue, blue], [blue, yellow], [blue, red], [blue, green]
 PRTC_FULL_COL = [green, green]
 
 
-# 'dot_density': 16.7, 
-# 'fieldsize' = [14.6, 14.6], 
-# 'center' = [0,0],  
-# 'groups' = 2,
-# 't_group' = 1,
-# 'rgbs' = [[ -1,0,1],[ 1,0,1]] 
-# 'frameRate' = 61)
-
 # CUE PARAMS
 CUE_FRAMES = round(0.4*REFRESH)
 CUE_ORI =  [0.0,90.0]
@@ -62,8 +53,9 @@ CIRCLE_COL = [0, 0, 0]
 
 
 # TRIAL PARAMS
+TIME_TO_RESP = 2.0 #2.5 seconds
 INTERSTIMI= [0.8,1.2]
-FRAMES = 180
+FRAMES = 30
 RESPONSE_KEYS = ['left', 'right']
 CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
@@ -72,6 +64,7 @@ GUI_INP = {'ProbandenNr':'',
             'Alter': '' , 
             'Händikeit': ['Links', 'Rechts'], 
             'Gruppe (für Experimentatorin)': ['PD', 'HC', 'PI']}
+
 
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']

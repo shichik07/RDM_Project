@@ -14,7 +14,7 @@ randomization structure is inspired by...
 
 """
 import os
-os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment')
+os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
@@ -182,15 +182,27 @@ def block_loop(trials):
                     core.quit()
                 elif keys[0][0] in RESPONSE_KEYS:
                     new_entries['Response'], new_entries['RT'] = keys[0]
-                    break # break presentation loop early
-            elif frame == FRAMES and keys == []:
-                new_entries['Response'] = 'No_resp'
-                new_entries['RT'] = None
-          
-        #Write Trial Information 
+                    #break # break presentation loop early
+            # elif frame == FRAMES and keys == []:
+            #     new_entries['Response'] = 'No_resp'
+            #     new_entries['RT'] = None
+        win.flip()  
+        condition = False
+        while clock.getTime() < TIME_TO_RESP:
+            keys = event.getKeys(timeStamped=clock)
+            if keys != [] and condition == False:
+                condition = True
+                if keys[0][0] in RESPONSE_KEYS:
+                    new_entries['Response'], new_entries['RT'] = keys[0]
+                    #break # break presentation loop early
+            elif keys !=[]:
+                if keys[0][0] in QUIT_KEY:
+                    wrt.finish()
+                    win.close()
+                    core.quit()
+        #Write Trial Information´
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
-        
         wrt.update(new_entries)
         wrt.finish()
     #wrt.finish() # save intermediate results
