@@ -162,39 +162,48 @@ def block_loop(trials):
         color, coord= DOT_UPD.create_dots()
        
         ISI.complete()  # finish theevent.clearEvents()
-        
+        condition = False
         #PRESENT STIM
         for frame in range(FRAMES):
+            
             if frame == 0:
                 clock.reset() # t0 for RT
                 event.clearEvents() # reset events
                 #send onset trigger
             dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
             dot_stim.draw()
-            TaskInfo.text = 'Coh = ' + str(trial_info.Coherence_total)
-            TaskInfo.draw()
+            # TaskInfo.text = 'Coh = ' + str(trial_info.Coherence_total)
+            # TaskInfo.draw()
             win.flip()
             keys = event.getKeys(timeStamped=clock)
             if keys != []:
+                print(keys)
                 if keys[0][0] in QUIT_KEY:
                     wrt.finish()
                     win.close()
                     core.quit()
                 elif keys[0][0] in RESPONSE_KEYS:
+                    condition = True
+                    new_entries['Response'], new_entries['RT'] = keys[0]
+                elif keys[0][0] in NUMBER_KEYS:
+                    condition = True
                     new_entries['Response'], new_entries['RT'] = keys[0]
                     #break # break presentation loop early
             # elif frame == FRAMES and keys == []:
             #     new_entries['Response'] = 'No_resp'
             #     new_entries['RT'] = None
         win.flip()  
-        condition = False
+        
         while clock.getTime() < TIME_TO_RESP:
             keys = event.getKeys(timeStamped=clock)
             if keys != [] and condition == False:
+                print(keys)
                 condition = True
                 if keys[0][0] in RESPONSE_KEYS:
                     new_entries['Response'], new_entries['RT'] = keys[0]
                     #break # break presentation loop early
+                elif keys[0][0] in NUMBER_KEYS:
+                    new_entries['Response'], new_entries['RT'] = keys[0]
             elif keys !=[]:
                 if keys[0][0] in QUIT_KEY:
                     wrt.finish()
@@ -283,6 +292,7 @@ Experimental_Parts = lis.Exp.unique() # Get Both Experimental Parts
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
 for exp in Experimental_Parts:
+    #exp = 'Exp_Part'
     # Start the Practice Session
     # Get the correct instructions
     if exp == 'Exp_Full': 

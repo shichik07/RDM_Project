@@ -53,10 +53,11 @@ CIRCLE_COL = [0, 0, 0]
 
 
 # TRIAL PARAMS
-TIME_TO_RESP = 2.0 #2.5 seconds
+TIME_TO_RESP = 2.5 #2.5 seconds
 INTERSTIMI= [0.8,1.2]
 FRAMES = 30
 RESPONSE_KEYS = ['left', 'right']
+NUMBER_KEYS = ['1','2']
 CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
 GUI_INP = {'ProbandenNr':'', 
@@ -69,7 +70,7 @@ GUI_INP = {'ProbandenNr':'',
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 BLOCK_NRS = [0,1,2,3]
-COHERENCE = [0.0, 0.1, 0.2, 0.5]
+COHERENCE = [0.0, 0.1, 0.2, 0.3]
 PROPORTION = [0.2, 1.8]
 TASK_NR = 40 # defined with respect to each coherence level
 PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
@@ -85,8 +86,9 @@ INTRO = (
     u'Das Experiment besteht aus zwei Teilen, die jeweils ungefähr 15 Minuten in Anspruch nehmen.'
     u'Ihre Aufgabe ist es in diesem Experiment einfache visuelle Entscheidungen treffen.',
     u'Dabei werden Sie sich scheinbar zufällig bewegende Punkte auf dem Bildschirm sehen.',
-    u'Sie müssen bestimmen ob sich diese Punkte jeweils mehrheitlich nach Links oder nach Rechts bewegen.',
-    u'Die Punkte können dabei einfarbig sein, aber auch zwei verschiedene Farben haben.',
+    u'Die Punkte können dabei unterschiedliche Farben haben (z.B. nur blau, oder grün und rot)',
+    u'Sie müssen bestimmen ob sich diese Punkte insgesamt jeweils mehrheitlich nach Links oder nach Rechts bewegen.',
+    u'Dafür werden Sie die Punkte für ca. eine halbe Sekunde beobachten können und haben anschließend zwei Sekund um Ihre Antwort zu geben.',
     u'In jedem der beiden Teile des Experiments kommt einer Farbe hierbei eine besondere Bedeutung zu, die Sie vorher lernen.',
     u'Um mit dem ersten Teil des Experiments zu beginnen, drücken Sie bitte die Leertaste.'
     )
@@ -95,25 +97,28 @@ PRACTICE_FULL_1 = (
     u'In diesem Teil des Experiments sehen Sie zunächst nur Punkte in einer Farbe die sich mehrheitlich in eine Richtung bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
     u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
-    u'Um fortzfahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
+    u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
     
 PRACTICE_FULL_2 = (
     u'Sehr gut gemacht! Sie haben den zweiten Teil der Übung erreicht.', 
     u'In diesem Teil des Experiments sehen Sie Punkte in verschiedenen Farben.',
     u'Punkte in grüner Farbe bewegen sich IMMER mehrheitlich in eine Richtung.',
     u'Bei allen anderen Farbkombinationen bewegen sich gleich viele Punkte in eine Richtung.',
-    u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren',
+    u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren.',
+    u'Das heißt, fokussieren Sie sich nur auf die grüngefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen.'
     u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
     
 EXP_FULL =(
     u'Sehr gut gemacht! Im folgenden startet der erste von vier Experimentellen Blöcken.',
-    u'Vom Ablauf her ändert sich nichts. Bitte fokussieren Sie sich wie bisher immer separat auf die Grünen Punkte',
+    u'Vom Ablauf her ändert sich nichts.',
+    u'Wenn Sie grüne Punkte sehen fokussieren Sie sich bitte wie bisher ausschließlich auf diese.',
     u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
 
 PRACTICE_PART_1 = (
-    u'In diesem Teil des Experiments sehen Sie zunächst Punkte in grüner und blauer Farbe',
+    u'In diesem Teil des Experiments sehen Sie zunächst Punkte in grüner und roter Farbe',
     u'Nur eine der Farben bewegt sich mehrheitlich in eine Richtung.',
-    u'Ihre Aufgabe wird es sein zu bestimmen ob sich die grünen oder die blauen Punkte mehrheitlich bewegen',
+    u'Ihre Aufgabe wird es sein zu bestimmen ob sich die grünen oder die roten Punkte mehrheitlich bewegen',
+    u'',
     u'Wenn sich die grünen Punkte mehrheitlich bewegen, drücken Sie bitte die "1", bei den blauen die "2"',
     u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
     u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
