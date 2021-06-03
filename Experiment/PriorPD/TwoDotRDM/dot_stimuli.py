@@ -213,9 +213,6 @@ class RDM_kinematogram(object):
             
             # indexes of coherently moving dots
             coh_ind = np.random.choice(Pop_1, int(num_coh[0]), replace = False)
-            print('Relative Coherence is:', num_coh)
-            print('Dots in Group 1 ',int(num_coh[0]))
-            print('Dots in Group 2',int(num_coh[1]))
             coh_ind = np.concatenate((coh_ind, np.random.choice(Pop_2, int(num_coh[1]), replace = False)))
             return coh_ind
         else:
