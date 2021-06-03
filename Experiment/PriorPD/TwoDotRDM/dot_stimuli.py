@@ -204,7 +204,7 @@ class RDM_kinematogram(object):
             coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
             return coh_ind
         elif len(self.coherence) == 2:
-            num_coh = np.dot(self.coherence,int(self.n_dot//6)) # number of coherently moving dots (per group)
+            num_coh = np.rint(np.dot(self.coherence,int(self.n_dot//6))) # number of coherently moving dots (per group)
             
             # Get the indices for both Dot pops
             Bol_pop1 = self.ind[frame%3][:,1]==1
@@ -213,6 +213,9 @@ class RDM_kinematogram(object):
             
             # indexes of coherently moving dots
             coh_ind = np.random.choice(Pop_1, int(num_coh[0]), replace = False)
+            print('Relative Coherence is:', num_coh)
+            print('Dots in Group 1 ',int(num_coh[0]))
+            print('Dots in Group 2',int(num_coh[1]))
             coh_ind = np.concatenate((coh_ind, np.random.choice(Pop_2, int(num_coh[1]), replace = False)))
             return coh_ind
         else:
