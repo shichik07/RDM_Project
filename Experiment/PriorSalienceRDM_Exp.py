@@ -26,6 +26,15 @@ from PriorPD.Task_func import item_struct as itm # generate Items
 
 #%% Instructions
 
+# Prepare Input by User/Experimenter
+GUI_INP['dateStr'] = data.getDateStr()  # add the current time
+
+# Updates DIALOGUE with dialogue response
+inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
+
+# get class and variables
+bl_lists = itm.GetBlockList(DOT_G_COL)
+
 
 
 # Set Monitor
@@ -40,10 +49,11 @@ my_monitor.saveMon()
 win = visual.Window(size = PIX_SIZE,
     monitor = "DellXPS15_screen",
     units=UNITS,
-    fullscr=False, # change to fullscreen later
+    fullscr=True, # change to fullscreen later
     color=BG_COLOR
 )
 
+win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )
@@ -177,18 +187,19 @@ def block_loop(trials):
             win.flip()
             keys = event.getKeys(timeStamped=clock)
             if keys != []:
-                print(keys)
+                #print(keys)
                 if keys[0][0] in QUIT_KEY:
                     wrt.finish()
                     win.close()
                     core.quit()
-                elif keys[0][0] in RESPONSE_KEYS:
-                    condition = True
-                    new_entries['Response'], new_entries['RT'] = keys[0]
-                elif keys[0][0] in NUMBER_KEYS:
-                    condition = True
-                    new_entries['Response'], new_entries['RT'] = keys[0]
-                    #break # break presentation loop early
+                elif condition == False:
+                    if keys[0][0] in RESPONSE_KEYS:
+                        condition = True
+                        new_entries['Response'], new_entries['RT'] = keys[0]
+                    elif keys[0][0] in NUMBER_KEYS:
+                        condition = True
+                        new_entries['Response'], new_entries['RT'] = keys[0]
+                        #break # break presentation loop early
             # elif frame == FRAMES and keys == []:
             #     new_entries['Response'] = 'No_resp'
             #     new_entries['RT'] = None
@@ -197,7 +208,6 @@ def block_loop(trials):
         while clock.getTime() < TIME_TO_RESP:
             keys = event.getKeys(timeStamped=clock)
             if keys != [] and condition == False:
-                print(keys)
                 condition = True
                 if keys[0][0] in RESPONSE_KEYS:
                     new_entries['Response'], new_entries['RT'] = keys[0]
@@ -223,14 +233,14 @@ def block_loop(trials):
 
 #%% Experimental loop
 
-# Prepare Input by User/Experimenter
-GUI_INP['dateStr'] = data.getDateStr()  # add the current time
+# # Prepare Input by User/Experimenter
+# GUI_INP['dateStr'] = data.getDateStr()  # add the current time
 
-# Updates DIALOGUE with dialogue response
-inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
+# # Updates DIALOGUE with dialogue response
+# inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
 
-# get class and variables
-bl_lists = itm.GetBlockList(DOT_G_COL)
+# # get class and variables
+# bl_lists = itm.GetBlockList(DOT_G_COL)
 
 
 
