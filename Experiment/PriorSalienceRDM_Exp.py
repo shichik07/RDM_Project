@@ -323,3 +323,5 @@ for exp in Experimental_Parts:
         if blc_idx == len(Task):
             instruction_show(BLOCK_INSTR)
 instruction_show(END) # Finish Message
+win.close()
+core.quit()
