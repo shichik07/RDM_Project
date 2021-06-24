@@ -132,7 +132,7 @@ class RDM_kinematogram(object):
         noise = np.ones(self.n_dot//3, dtype=bool)
         noise[coh_ind] = False
         
-        #update the noise dot indices
+        #update the noiserandrange(10) dot indices
         if self.alg == 'MN':# for Movshon-Newsome updating (random speed and direction)
             # randomize x and y coordinates for the noise dots
             self.ind[frame%3][noise,5:7] = np.array([
@@ -198,14 +198,21 @@ class RDM_kinematogram(object):
         """ Function that randomly selects coherently moving dots for either one or 
         two randomly moving dot populations"""
         if type(self.coherence) is float:
-            num_coh = int(self.coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
-            
+            update_jitter = random.randrange(2)
+            if update_jitter%1 == 0:
+                num_coh = int(self.coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
+            else:
+                num_coh = 0
+                
             # indexes of coherently moving dots
             coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
             return coh_ind
         elif len(self.coherence) == 2:
-            num_coh = np.rint(np.dot(self.coherence,int(self.n_dot//6))) # number of coherently moving dots (per group)
-            
+            update_jitter = random.randrange(2)
+            if update_jitter%1 == 0:
+                num_coh = np.rint(np.dot(self.coherence,int(self.n_dot//6))) # number of coherently moving dots (per group)
+            else:
+                num_coh = [0,0]
             # Get the indices for both Dot pops
             Bol_pop1 = self.ind[frame%3][:,1]==1
             Pop_1 = np.where(Bol_pop1)[0]

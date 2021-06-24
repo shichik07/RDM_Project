@@ -21,7 +21,7 @@ REFRESH = 61
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
 ALG =  'BM' #'MN'
-DOT_SPEED = 8
+DOT_SPEED = 2 #used to be 8
 DOT_SIZE = 0.2
 DOT_DENSITY = 16.7
 FIELD_SIZE_DOT =  [14.8, 14.8] # Field Size for the DOt Updates
@@ -63,7 +63,7 @@ CIRCLE_COL = [0, 0, 0]
 # TRIAL PARAMS
 TIME_TO_RESP = 2.5 #2.5 seconds
 INTERSTIMI= [0.8,1.2]
-FRAMES = 30
+FRAMES = 90 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
 CONTINUE_KEYS = ['return', 'space']
