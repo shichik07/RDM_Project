@@ -91,7 +91,7 @@ TEXT_COL = [1,1,1]
 INTRO = (
     u'Willkommen bei unserem Experiment.', 
     u'Ziel unseres Experiments ist es ein besseres Verständnis wie das Gehirn Entscheidungen trifft.',
-    u'Das Experiment besteht aus zwei Teilen, die jeweils ungefähr 20 Minuten in Anspruch nehmen.'
+    u'Das Experiment besteht aus zwei Teilen, die jeweils ungefähr 20 Minuten in Anspruch nehmen.',
     u'Ihre Aufgabe ist es in diesem Experiment einfache visuelle Entscheidungen treffen.',
     u'Dabei werden Sie sich scheinbar zufällig bewegende Punkte auf dem Bildschirm sehen.',
     u'Die Punkte können dabei unterschiedliche Farben haben (z.B. nur blau, oder grün und rot)',
@@ -115,7 +115,7 @@ PRACTICE_FULL_2 = (
     u'Punkte in grüner Farbe bewegen sich IMMER mehrheitlich in eine Richtung.',
     u'Bei allen anderen Farbkombinationen bewegen sich gleich viele Punkte in eine Richtung.',
     u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren.',
-    u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen.'
+    u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen.',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die rechte Pfeiltaste.',
     u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
     
@@ -123,7 +123,9 @@ EXP_FULL =(
     u'Sehr gut gemacht! Im folgenden startet der erste von vier Experimentellen Blöcken.',
     u'Vom Ablauf her ändert sich nichts.',
     u'Wenn Sie grüne Punkte sehen fokussieren Sie sich bitte wie bisher ausschließlich auf diese.',
-    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
+    u'Bei allen anderen Farben/Farbkombinationen geben Sie wie bisher die mehrheitliche Richtung der Bewegung an.',
+    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.',
+    u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
 
 PRACTICE_PART_1 = (
     u'In diesem Teil des Experiments sehen Sie zunächst Punkte in blauer und roter Farbe',
@@ -145,10 +147,12 @@ EXP_PART =(
     u'Sehr gut gemacht! Im folgenden startet der erste von vier Experimentellen Blöcken.',
     u'Vom Ablauf her ändert sich nichts.',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
-    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
+    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.',
+    u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
 
 BLOCK_INSTR= (
-    u'Sie haben das Ende des Blocks erreicht. Um mit dem nächsten Block fortzufahren, drücken Sie bitte die Leertaste.'
+    u'Sie haben das Ende des Blocks erreicht. Um mit dem nächsten Block fortzufahren, drücken Sie bitte die Leertaste.',
+     u'ACHTUNG folgend beginnt automatisch der nächste Aufgabenblock.'
     )
 
 END = (
