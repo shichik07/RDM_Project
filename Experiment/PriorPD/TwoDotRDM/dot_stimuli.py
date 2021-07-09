@@ -245,9 +245,6 @@ class RDM_kinematogram(object):
         
 
 #%%
-a = random.randrange(3)
-print(a)
-a%2 == 0
 
 # """
 # Add the dot functionality in degrees. I need to write this out properly since
