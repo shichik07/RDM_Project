@@ -66,7 +66,7 @@ CIRCLE_COL = [0, 0, 0]
 
 
 # TRIAL PARAMS
-TIME_TO_RESP = 2.5 #2.5 seconds
+TIME_TO_RESP = 0.7 #2.5 seconds
 INTERSTIMI= [0.8,1.2]
 FRAMES = 120 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
@@ -83,7 +83,7 @@ GUI_INP = {'ProbandenNr':'',
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 BLOCK_NRS = [0,1,2,3]
-COHERENCE = [0.0, 4/30, 6/30, 8/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
+COHERENCE = [0.0, 4/30, 6/30, 10/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
 PROPORTION = [0.0, 2.0] #[0.2, 1.8]
 TASK_NR = 40 # defined with respect to each coherence level
 PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
@@ -156,13 +156,17 @@ EXP_PART =(
     u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
 
 BLOCK_INSTR= (
-    u'Sie haben das Ende des Blocks erreicht. Um mit dem nächsten Block fortzufahren, drücken Sie bitte die Leertaste.',
+    u'Sie haben das Ende des %d\n von 4 Blocks erreicht. Um mit dem nächsten Block fortzufahren, drücken Sie bitte die Leertaste.',
      u'ACHTUNG folgend beginnt automatisch der nächste Aufgabenblock.'
     )
 
 END = (
        u'Sie haben das Ende des Experiments erreicht. Vielen Dank für Ihre Teilnahme!'       
        )
+
+PRACTICE_INST = (u'Sie haben das Ende des Blocks erreicht, drücken Sie die Leertaste um fortzufahren.')
+
+EXP_END =(u'Sie haben diesen Teil des Experiments beendet. Drücken Sie bitte die Leertaste um fortzufahren.')
 
 PRACTICE_FULL = [PRACTICE_FULL_1, PRACTICE_FULL_2]
 PRACTICE_PART = [PRACTICE_PART_1, PRACTICE_PART_2]

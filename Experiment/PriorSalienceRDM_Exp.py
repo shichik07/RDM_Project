@@ -35,8 +35,6 @@ inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr']
 # get class and variables
 bl_lists = itm.GetBlockList(DOT_G_COL)
 
-
-
 # Set Monitor
 
 my_monitor = monitors.Monitor(name='DellXPS15_screen')
@@ -62,18 +60,7 @@ TaskInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
-    
-
-txt_1 = 'Willkommen bei unserem Experiment'
-txt_2 = u'In diesem Experiment werden Sie sich scheinbar zufäälig bewegende Punkte auf dem Bildschirm sehen.'
-txt_3 = u'Die Punkte sind entweder weiß in machen Versuchen, oder Rot und Blau in anderen.'
-txt_4 = u'Ihre Aufgabe wird es sein zu bestimmen ob sich diese Punkte jeweils mehrheitlich nach Links oder nach Rechts bewegen.'
-txt_5 = u'Dabei bekommen Sie vor jedem Versuch einen Hinweis.'
-txt_6 = u'Sehen Sie einen weißen Kreis, können Sie sich allein auf die Punkte und deren Bewegungen konzentrieren.'
-txt_7 = u'Wenn Sie einen vertikal schattierten Kreis sehen, heißt das Sie sehen gleich Rote und Blaue Punkte. Und eine der beiden Farben wird sich im Experiment mehrheitlich in eine Richtung bewegen.'
-txt_8 = u'Um mit dem Experiment zu beginnen, drücken Sie bitte die Leertaste.'
-txt_blcP = u'Sie haben das Ende des Blocks erreicht, drücken SIe die Leertaste um fortzufahren.'
-text_fin = u'You have finished the end of the Experiment. Thank you for your participation!'
+ 
 #%% Set Stimuli
 
 # to keep track of time
@@ -120,10 +107,14 @@ circle = visual.Circle(
 
 
 # Instruction presentation
-def instruction_show(text):
+def instruction_show(text, *BlockIndex):
     ''' Show instruction and wait for a response
     Source: Tutorial Lindelov'''
-    Instruction.text = text
+    if not BlockIndex:
+        Instruction.text = text
+    else:
+        text = text%BlockIndex
+        Instruction.text = text
     Instruction.draw()
     win.flip()
     key = event.waitKeys()
@@ -132,10 +123,16 @@ def instruction_show(text):
          core.quit()
     return key
 
-def instruction_loop(instructions):
-    for inst in instructions:
-        instruction_show(inst)
-        
+def instruction_loop(instructions, *BlockIndex):
+    if not BlockIndex:
+        for inst in instructions:
+            instruction_show(inst)
+    else:
+        for ind, inst in enumerate(instructions):
+            if ind == 0:
+                instruction_show(inst, *BlockIndex)
+            else:
+                instruction_show(inst)
 
 def block_loop(trials):
     for trl_ind, trial_info in trials.iterrows():
@@ -230,25 +227,20 @@ def block_loop(trials):
             new_entries['Correct'] = 1
         wrt.update(new_entries)
         wrt.finish()
-    #wrt.finish() # save intermediate results
-    instruction_show(txt_blcP) #BLOCKBREAK SCREEN
+   
+    # Display Instructions to indicate Block ended
+    if trial_info.Block == 'Practice_1' or trial_info.Block == 'Practice_2':
+        instruction_show(PRACTICE_INST)
+    elif int(trial_info.Block)+1 == 4:
+        instruction_show(EXP_END)
+    else:
+        instruction_loop(BLOCK_INSTR, int(trial_info.Block)+1) #BLOCKBREAK SCREEN
      
     
     
 
 
 #%% Experimental loop
-
-# # Prepare Input by User/Experimenter
-# GUI_INP['dateStr'] = data.getDateStr()  # add the current time
-
-# # Updates DIALOGUE with dialogue response
-# inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
-
-# # get class and variables
-# bl_lists = itm.GetBlockList(DOT_G_COL)
-
-
 
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
@@ -300,7 +292,6 @@ BaseInf =  {'Gender': inp.data[1],
 # Initialize file
 wrt.set_file()
 wrt.finish()
-
 win.flip()
 
 
@@ -327,8 +318,6 @@ for exp in Experimental_Parts:
     for blc_idx, block in enumerate(Task):
         trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
         block_loop(trials) #run block
-        if blc_idx == len(Task):
-            instruction_show(BLOCK_INSTR)
 instruction_show(END) # Finish Message
 win.close()
 core.quit()
