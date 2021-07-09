@@ -7,7 +7,7 @@ Created on Fri Apr  9 15:00:21 2021
 """
 
 
-
+import numpy as np
 'Define Parameter for the Experiment'
 
 # DISPLAY PARAMS
@@ -21,18 +21,22 @@ REFRESH = 61
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
 ALG =  'BM' #'MN'
-DOT_SPEED = 2 #used to be 8
+DOT_SPEED = 1.5 #used to be 8
 DOT_SIZE = 0.2
-DOT_DENSITY = 16.7
-FIELD_SIZE_DOT =  [14.8, 14.8] # Field Size for the DOt Updates
+DOT_DENSITY = 16.7 
+FIELD_SIZE_DOT = [10.4, 10.4]  # #[14.8, 14.8] Field Size for the DOt Updates
 CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
+JITTER_UPDATE = 2 # on which frames updates occur
+
+
+
 
 #Number of dots
 if ALG == 'MN':
-    DOT_N = 20
+    DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))/3 #workaround
 else:
-    DOT_N = 60
+    DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))
 
 # Colors of all dot Groups and luminance matching 
 green = [85,188,75]
@@ -44,6 +48,7 @@ DOT_G_COL = [blue, blue], [blue, yellow], [blue, red], [blue, green]
 PRTC_FULL_COL = [green, green]
 BASE_COL = blue # color against which other colors are compared
 LUM_METHOD = 'flicker' # Luminance matchin method, either "flicker" or 'min_mo' 
+
 
 green_hsv = [115, 0.6, 0.7]
 blue_hsv = [204, 0.68, 1]
@@ -63,7 +68,7 @@ CIRCLE_COL = [0, 0, 0]
 # TRIAL PARAMS
 TIME_TO_RESP = 2.5 #2.5 seconds
 INTERSTIMI= [0.8,1.2]
-FRAMES = 90 # used to be 30 (0.5) seconds
+FRAMES = 120 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
 CONTINUE_KEYS = ['return', 'space']
@@ -78,7 +83,7 @@ GUI_INP = {'ProbandenNr':'',
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 BLOCK_NRS = [0,1,2,3]
-COHERENCE = [0.0, 2/30, 4/30, 0.3] # Note: we can use
+COHERENCE = [0.0, 4/30, 6/30, 8/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
 PROPORTION = [0.0, 2.0] #[0.2, 1.8]
 TASK_NR = 40 # defined with respect to each coherence level
 PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
