@@ -29,7 +29,8 @@ class RDM_kinematogram(object):
                  center = CENTER,  
                  groups = GROUP_NR, 
                  rgbs = PRTC_FULL_COL, # just default, will not be shown
-                 frameRate = REFRESH):
+                 frameRate = REFRESH,
+                 Jitter = JITTER_UPDATE):
         """ Initialize with algorithm choice """
         if alg != 'MN' and alg != 'BM':
             raise ValueError('The RDM algorithm you requested does not exist. '
@@ -74,7 +75,8 @@ class RDM_kinematogram(object):
         self.fieldsize = fieldsize
         self.bounds_x = 0.5*self.fieldsize[0] + self.center[0] # determine aperature bounds on the x axis
         self.bounds_y = 0.5*self.fieldsize[1] + self.center[1] # determine aperature bounds on the y axis
-        self.alg = alg    
+        self.alg = alg
+        self.Jitter = Jitter
         
     def create_dots(self):
         ''' Outputs a matrix that contains information of each dot by column: 
@@ -198,8 +200,8 @@ class RDM_kinematogram(object):
         """ Function that randomly selects coherently moving dots for either one or 
         two randomly moving dot populations"""
         if type(self.coherence) is float:
-            update_jitter = random.randrange(2)
-            if update_jitter%1 == 0:
+            update_jitter = random.randrange(self.Jitter)
+            if update_jitter == (self.Jitter-1):
                 num_coh = int(self.coherence*int(self.n_dot//3)) # number of coherently moving dots (per group)
             else:
                 num_coh = 0
@@ -208,8 +210,8 @@ class RDM_kinematogram(object):
             coh_ind = np.random.choice(range(int(self.n_dot//3)), num_coh, replace = False)
             return coh_ind
         elif len(self.coherence) == 2:
-            update_jitter = random.randrange(2)
-            if update_jitter%1 == 0:
+            update_jitter = random.randrange(self.Jitter)
+            if update_jitter == (self.Jitter-1):
                 num_coh = np.rint(np.dot(self.coherence,int(self.n_dot//6))) # number of coherently moving dots (per group)
             else:
                 num_coh = [0,0]
@@ -243,7 +245,9 @@ class RDM_kinematogram(object):
         
 
 #%%
-
+a = random.randrange(3)
+print(a)
+a%2 == 0
 
 # """
 # Add the dot functionality in degrees. I need to write this out properly since
