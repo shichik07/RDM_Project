@@ -297,6 +297,8 @@ win.flip()
 
 # start Block
 Experimental_Parts = lis.Exp.unique() # Get Both Experimental Parts
+if inp.data[4]%2 == 0:
+    Experimental_Parts = Experimental_Parts[::-1]
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
 for exp in Experimental_Parts:
