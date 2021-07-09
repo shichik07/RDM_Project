@@ -166,7 +166,8 @@ def block_loop(trials):
               'Correct': 0, #default is incorrect
               'RT': None,
               'Exp': trial_info.Exp,
-              'ColorSwitch': trial_info.ColorSwitch}
+              'ColorSwitch': trial_info.ColorSwitch,
+              'Late_Response': False}
             
         # create a fresh instance for the dots
         color, coord= DOT_UPD.create_dots()
@@ -200,20 +201,25 @@ def block_loop(trials):
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]
                         #break # break presentation loop early
+                    event.clearEvents()
+                    Resp_given = core.getTime()
+                    break
             # elif frame == FRAMES and keys == []:
             #     new_entries['Response'] = 'No_resp'
             #     new_entries['RT'] = None
         win.flip()  
         
-        while clock.getTime() < TIME_TO_RESP:
+        while (core.getTime() - Resp_given) < TIME_TO_RESP:
             keys = event.getKeys(timeStamped=clock)
             if keys != [] and condition == False:
                 condition = True
                 if keys[0][0] in RESPONSE_KEYS:
                     new_entries['Response'], new_entries['RT'] = keys[0]
+                    new_entries['Late_Response'] = True
                     #break # break presentation loop early
                 elif keys[0][0] in NUMBER_KEYS:
                     new_entries['Response'], new_entries['RT'] = keys[0]
+                    new_entries['Late_Response'] = True
             elif keys !=[]:
                 if keys[0][0] in QUIT_KEY:
                     wrt.finish()
@@ -275,7 +281,8 @@ TRIAL ={'Trial_nr': None ,
               'Coherence_total':None,
               'Exp':None,
               'ColorSwitch':None,
-              'Date': inp.data[5]}
+              'Date': inp.data[5],
+              'Late_Response':None}
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 # start writing
