@@ -171,7 +171,7 @@ def block_loop(trials):
        
         ISI.complete()  # finish theevent.clearEvents()
         condition = False
-        #PRESENT STIM
+        #PRESENT STIM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
         for frame in range(FRAMES):
             
             if frame == 0:
@@ -199,29 +199,29 @@ def block_loop(trials):
                         new_entries['Response'], new_entries['RT'] = keys[0]
                         #break # break presentation loop early
                     event.clearEvents()
-                    Resp_given = core.getTime()
+                    Resp_given = True
                     break
-            # elif frame == FRAMES and keys == []:
-            #     new_entries['Response'] = 'No_resp'
-            #     new_entries['RT'] = None
         win.flip()  
         
-        while (core.getTime() - Resp_given) < TIME_TO_RESP:
-            keys = event.getKeys(timeStamped=clock)
-            if keys != [] and condition == False:
-                condition = True
-                if keys[0][0] in RESPONSE_KEYS:
-                    new_entries['Response'], new_entries['RT'] = keys[0]
-                    new_entries['Late_Response'] = True
-                    #break # break presentation loop early
-                elif keys[0][0] in NUMBER_KEYS:
-                    new_entries['Response'], new_entries['RT'] = keys[0]
-                    new_entries['Late_Response'] = True
-            elif keys !=[]:
-                if keys[0][0] in QUIT_KEY:
-                    wrt.finish()
-                    win.close()
-                    core.quit()
+        # in case our participants respond after the stimulus presentation
+        if 'Resp_given' not in locals():
+            Resp_time = core.getTime()
+            while (core.getTime() - Resp_time) < TIME_TO_RESP:
+                keys = event.getKeys(timeStamped=clock)
+                if keys != [] and condition == False:
+                    condition = True
+                    if keys[0][0] in RESPONSE_KEYS:
+                        new_entries['Response'], new_entries['RT'] = keys[0]
+                        new_entries['Late_Response'] = True
+                        #break # break presentation loop early
+                    elif keys[0][0] in NUMBER_KEYS:
+                        new_entries['Response'], new_entries['RT'] = keys[0]
+                        new_entries['Late_Response'] = True
+                elif keys !=[]:
+                    if keys[0][0] in QUIT_KEY:
+                        wrt.finish()
+                        win.close()
+                        core.quit()
         #Write Trial Information´
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
@@ -297,7 +297,7 @@ win.flip()
 
 # start Block
 Experimental_Parts = lis.Exp.unique() # Get Both Experimental Parts
-if inp.data[4]%2 == 0:
+if int(inp.data[4])%2 == 0:
     Experimental_Parts = Experimental_Parts[::-1]
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()

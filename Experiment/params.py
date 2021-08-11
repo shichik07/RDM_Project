@@ -66,7 +66,7 @@ CIRCLE_COL = [0, 0, 0]
 
 
 # TRIAL PARAMS
-TIME_TO_RESP = 0.7 #2.5 seconds
+TIME_TO_RESP = 1 # Time to respond after stimuli display - to catch slow responses eventually
 INTERSTIMI= [0.8,1.2]
 FRAMES = 120 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
