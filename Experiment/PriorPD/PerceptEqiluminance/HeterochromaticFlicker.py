@@ -16,27 +16,144 @@ import pandas as pd
 import random
 from params import * # import fixed parameter 
 
-# PARAMETER
 
+# class color_matching(object):
+#     def __init__(self, 
+#                  method,
+#                  array_size = 256,
+#                  monitor_config = ,
+#                  window_config,
+#                  colors)
+#     def window_objects(window):
+
+win = visual.Window(size = PIX_SIZE,
+    monitor = "DellXPS15_screen",
+    units=UNITS,
+    fullscr=False, # change to fullscreen later
+    color=BG_COLOR
+)
+  
+# def heterochromatic_flicker(window):
+#     ProgressInfo = visual.TextStim(win=window, color=TEXT_COL, pos=(10.0,0.0))
+#     my_monitor = MY_MONITOR
+#     bar_outline = visual.Rect(win=window, 
+#                           pos=(BAR_POS), 
+#                           size=(WIDTH_PHOTO, HEIGHT_PHOTO*1.07), 
+#                           lineColor='White')
+#     bar_adj = visual.Rect(win=window,
+#                       pos=(BAR_POS),
+#                       fillColor = 'White')
+#     #for heterochromatic flicker photometry
+#     circle = visual.Circle(win=win,
+#                            radius=RADIUS,
+#                            units = "pix",
+#                            colorSpace = "hsv",
+#                            color= green_hsv)
+#     for comp in range(len(DOT_G_COL)-1):
+#         bar_pos = [5,0] # introduce here so that we always start at 0
+#         target_color = DOT_G_COL_hsv[comp + 1][1]
+#         base_color = BASE_COL_hsvwin = visual.Window(size = PIX_SIZE,
+#     monitor = "DellXPS15_screen",
+#     units=UNITS,
+#     fullscr=False, # change to fullscreen later
+#     color=BG_COLOR
+# )
+  
+def heterochromatic_flicker(window):
+    ProgressInfo = visual.TextStim(win=window, color=TEXT_COL, pos=(10.0,0.0))
+    my_monitor = MY_MONITOR
+    bar_outline = visual.Rect(win=window, 
+                          pos=(BAR_POS), 
+                          size=(WIDTH_PHOTO, HEIGHT_PHOTO*1.07), 
+                          lineColor='White')
+    bar_adj = visual.Rect(win=window,
+                      pos=(BAR_POS),
+                      fillColor = 'White')
+    #for heterochromatic flicker photometry
+    circle = visual.Circle(win=win,
+                           radius=RADIUS,
+                           units = "pix",
+                           colorSpace = "hsv",
+                           color= green_hsv)
+    for comp in range(len(DOT_G_COL)-1):
+        bar_pos = [5,0] # introduce here so that we always start at 0
+        target_color = DOT_G_COL_hsv[comp + 1][1]
+        base_color = BASE_COL_hsv
+        ColorFound = False
+        count1 = 0
+        count2 = 0
+        event.clearEvents()
+        if LUM_METHOD == 'flicker':
+            while ColorFound == False:
+                keys = event.getKeys()
+                count1 +=1
+                circle.draw()
+                bar_outline.draw()
+                # move the progressbar
+                bar_adj.pos = bar_pos[0], target_color[2]*HEIGHT_PHOTO- HEIGHT_PHOTO/2
+                # Adjust Text
+                ProgressInfo.text = 'Helligkeit : ' + str(round(target_color.copy()[2]*100)) + '%'
+                ProgressInfo.draw()
+                bar_adj.draw()
+                win.flip()
+                if count1%2 == 0:
+                    circle.color = base_color
+                else:
+                    circle.color = target_color
+                if keys != []:
+                    print(keys)
+                    print(target_color)
+                    if keys[0] == COLOR_KEYS[0]:
+                        #if up has been pressed, increase brightness
+                        if target_color[2] < 1:
+                            target_color[2] += 0.01 
+                            event.clearEvents() # clear events
+                    elif keys[0] == COLOR_KEYS[1]:
+                        #if up has been pressed, decrease brightness
+                        if target_color[2] > 0:
+                            target_color[2] -= 0.01 
+                            event.clearEvents() # clear events
+                    elif keys[0] == CONTINUE_KEYS[0]:
+                        #target condition has been found, end loop
+                        ColorFound = True
+                        event.clearEvents()
+                        print(target_color)
+            print(Green, target_color)        
+            
+
+
+    
+heterochromatic_flicker(win)
+win.flip()
+win.close()
+core.quit()  
+        
+            
+
+
+    
+heterochromatic_flicker(win)
+win.flip()
+win.close()
+core.quit()  
+   
+    
+# # PARAMETER
+
+# # Green = [115, 0.6, 0.7]
+# # Blue  = [238, 0.75, 0.4]
+# # Yellow = [50, 0.6, 0.4]
+# # Red = [0, 0.84, 0.4]
 # Green = [115, 0.6, 0.7]
-# Blue  = [238, 0.75, 0.4]
-# Yellow = [50, 0.6, 0.4]
-# Red = [0, 0.84, 0.4]
-Green = [115, 0.6, 0.7]
-Blue = [204, 0.68, 1]
-Yellow = [46, 1, 0.83]
-Red = [14, 0.68, 0.8]
-COLOR_KEYS = ['up', 'down']
-arr = 256
+# Blue = [204, 0.68, 1]
+# Yellow = [46, 1, 0.83]
+# Red = [14, 0.68, 0.8]
+# COLOR_KEYS = ['up', 'down']
+# arr = 256
 
 # MONITOR
 
-my_monitor = monitors.Monitor(name='DellXPS15_screen')
-my_monitor.setSizePix(PIX_SIZE)
-my_monitor.setWidth(WIDTH)
-my_monitor.setDistance(DISTANCE)
-my_monitor.saveMon()
-
+my_monitor = MY_MONITOR
 
 win = visual.Window(size = PIX_SIZE,
     monitor = "DellXPS15_screen",

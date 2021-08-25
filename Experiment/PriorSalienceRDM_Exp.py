@@ -36,22 +36,15 @@ inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr']
 bl_lists = itm.GetBlockList(DOT_G_COL)
 
 # Set Monitor
+my_monitor = MY_MONITOR
 
-my_monitor = monitors.Monitor(name='DellXPS15_screen')
-my_monitor.setSizePix(PIX_SIZE)
-my_monitor.setWidth(WIDTH)
-my_monitor.setDistance(DISTANCE)
-my_monitor.saveMon()
-
-
-win = visual.Window(size = PIX_SIZE,
-    monitor = "DellXPS15_screen",
-    units=UNITS,
-    fullscr=True, # change to fullscreen later
-    color=BG_COLOR
-)
-
-win.mouseVisible = False
+# win = visual.Window(size = PIX_SIZE,
+#     monitor = "DellXPS15_screen",
+#     units=UNITS,
+#     fullscr=True, # change to fullscreen later
+#     color=BG_COLOR, 
+# )
+# win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )

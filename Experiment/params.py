@@ -8,7 +8,7 @@ Created on Fri Apr  9 15:00:21 2021
 
 
 import numpy as np
-from psychopy import monitors
+from psychopy import monitors,visual
 'Define Parameter for the Experiment'
 
 # DISPLAY PARAMS
@@ -30,13 +30,24 @@ CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
 JITTER_UPDATE = 2 # on which frames updates occur
 
+#FLICKERPHOTOMETRY PARAMS
+WIDTH_PHOTO = 0.5
+HEIGHT_PHOTO = 6.0
+BAR_POS = [5,0]
+RADIUS = 150
+
 # Experiment Objects
 MY_MONITOR = monitors.Monitor(name='DellXPS15_screen')
 MY_MONITOR.setSizePix(PIX_SIZE)
 MY_MONITOR.setWidth(WIDTH)
 MY_MONITOR.saveMon()
 
-
+# win = visual.Window(size = PIX_SIZE,
+#      monitor = "DellXPS15_screen",
+#      units=UNITS,
+#      fullscr=True, # change to fullscreen later
+#      color=BG_COLOR, 
+#  )
 
 #Number of dots
 if ALG == 'MN':
@@ -77,6 +88,7 @@ INTERSTIMI= [0.8,1.2]
 FRAMES = 120 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
+COLOR_KEYS =['up','down']
 CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
 GUI_INP = {'ProbandenNr':'', 
