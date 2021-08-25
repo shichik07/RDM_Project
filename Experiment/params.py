@@ -8,6 +8,7 @@ Created on Fri Apr  9 15:00:21 2021
 
 
 import numpy as np
+from psychopy import monitors
 'Define Parameter for the Experiment'
 
 # DISPLAY PARAMS
@@ -29,6 +30,11 @@ CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
 JITTER_UPDATE = 2 # on which frames updates occur
 
+# Experiment Objects
+MY_MONITOR = monitors.Monitor(name='DellXPS15_screen')
+MY_MONITOR.setSizePix(PIX_SIZE)
+MY_MONITOR.setWidth(WIDTH)
+MY_MONITOR.saveMon()
 
 
 
