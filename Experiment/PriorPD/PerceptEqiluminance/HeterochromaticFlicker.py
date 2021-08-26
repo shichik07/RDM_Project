@@ -18,12 +18,24 @@ from params import * # import fixed parameter
 from PriorPD.Task_func import item_struct as itm # generate Items
 
 
-def heterochromatic_flicker(win, 
-                            colors, 
-                            ProgressInfo, 
-                            bar_outline, 
-                            bar_adj, 
-                            circle):
+def heterochromatic_flicker(win, colors):
+    # Flicker Photometry Objects
+    ProgressInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
+
+    bar_outline = visual.Rect(win=win, 
+                          pos=(BAR_POS), 
+                          size=(WIDTH_PHOTO, HEIGHT_PHOTO*1.07), 
+                          lineColor='White')
+    bar_adj = visual.Rect(win=win,
+                      pos=(BAR_POS),
+                      fillColor = 'White')
+    
+    #for heterochromatic flicker photometry
+    circle = visual.Circle(win=win,
+                            radius=RADIUS,
+                            units = "pix",
+                            colorSpace = "hsv",
+                            color= green_hsv)
     for comp in range(len(colors)-1):
         bar_pos = [5,0] # introduce here so that we always start at 0
         target_color = colors[comp + 1][1]

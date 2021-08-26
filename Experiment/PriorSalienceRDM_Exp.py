@@ -78,24 +78,6 @@ dot_stim= visual.ElementArrayStim(
     colors=color
 )
 
-# Flicker Photometry Objects
-ProgressInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
-
-bar_outline = visual.Rect(win=win, 
-                          pos=(BAR_POS), 
-                          size=(WIDTH_PHOTO, HEIGHT_PHOTO*1.07), 
-                          lineColor='White')
-bar_adj = visual.Rect(win=win,
-                      pos=(BAR_POS),
-                      fillColor = 'White')
-    
-#for heterochromatic flicker photometry
-circle = visual.Circle(win=win,
-                            radius=RADIUS,
-                            units = "pix",
-                            colorSpace = "hsv",
-                            color= green_hsv)
-
 
 # Instruction presentation
 def instruction_show(text, *BlockIndex):
@@ -237,8 +219,7 @@ Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
 
 # Match Colors
-hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv, ProgressInfo, bar_outline, bar_adj, circle)
-
+hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv)
 # get class and variables
 bl_lists = itm.GetBlockList(hsv_set)
 
