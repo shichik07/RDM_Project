@@ -23,6 +23,7 @@ from PriorPD.Task_func import trial_writer as tw # import csv writer
 from PriorPD.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
 from params import * # import fixed parameter 
 from PriorPD.Task_func import item_struct as itm # generate Items
+from PriorPD.PerceptEqiluminance import HeterochromaticFlicker as flicker # luminance match function
 
 #%% Instructions
 
@@ -32,19 +33,17 @@ GUI_INP['dateStr'] = data.getDateStr()  # add the current time
 # Updates DIALOGUE with dialogue response
 inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
 
-# get class and variables
-bl_lists = itm.GetBlockList(DOT_G_COL)
 
 # Set Monitor
 my_monitor = MY_MONITOR
 
-# win = visual.Window(size = PIX_SIZE,
-#     monitor = "DellXPS15_screen",
-#     units=UNITS,
-#     fullscr=True, # change to fullscreen later
-#     color=BG_COLOR, 
-# )
-# win.mouseVisible = False
+win = visual.Window(size = PIX_SIZE,
+    monitor = "DellXPS15_screen",
+    units=UNITS,
+    fullscr=True, # change to fullscreen later
+    color=BG_COLOR, 
+)
+win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )
@@ -68,7 +67,7 @@ color, coord= DOT_UPD.create_dots()
 dot_stim= visual.ElementArrayStim(
     win=win,
     units=UNITS,
-    colorSpace = 'rgb255',
+    colorSpace = 'hsv',#'rgb255',
     nElements=DOT_N,
     elementTex=None,
     elementMask="circle",
@@ -79,24 +78,23 @@ dot_stim= visual.ElementArrayStim(
     colors=color
 )
 
-# create the informative Cues
-grating =visual.GratingStim(
-    win=win,
-    units=UNITS,
-    size= GRATE_SIZE,
-    sf = (5.0/4.0),
-    mask = "circle",
-    contrast = GRATE_CONT
-    )
+# Flicker Photometry Objects
+ProgressInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 
-# create the non-informative cue 
-circle = visual.Circle(
-    win=win,
-    units=UNITS,
-    radius= 2,
-    fillColor=CIRCLE_COL,
-    lineColor=CIRCLE_COL
-)
+bar_outline = visual.Rect(win=win, 
+                          pos=(BAR_POS), 
+                          size=(WIDTH_PHOTO, HEIGHT_PHOTO*1.07), 
+                          lineColor='White')
+bar_adj = visual.Rect(win=win,
+                      pos=(BAR_POS),
+                      fillColor = 'White')
+    
+#for heterochromatic flicker photometry
+circle = visual.Circle(win=win,
+                            radius=RADIUS,
+                            units = "pix",
+                            colorSpace = "hsv",
+                            color= green_hsv)
 
 
 # Instruction presentation
@@ -237,6 +235,13 @@ def block_loop(trials):
 
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
+
+# Match Colors
+hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv, ProgressInfo, bar_outline, bar_adj, circle)
+
+# get class and variables
+bl_lists = itm.GetBlockList(hsv_set)
+
 # generate the list
 lis = bl_lists.init_list()
 # randomize items per block
