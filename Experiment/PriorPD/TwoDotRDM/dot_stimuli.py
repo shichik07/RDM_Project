@@ -125,6 +125,8 @@ class RDM_kinematogram(object):
         
         #get indices of coherently moving dots
         coh_ind = self.get_coherent_dots(frame)
+        # print("The coherently moving dots are at index " +str(coh_ind))
+        # print("Colors" +str(self.ind[frame%3][coh_ind,2:5]))
         
         # update the relevant indexes for coherent dots;
         self.ind[frame%3][coh_ind,5] +=  displacement_x
@@ -219,7 +221,7 @@ class RDM_kinematogram(object):
             Bol_pop1 = self.ind[frame%3][:,1]==1
             Pop_1 = np.where(Bol_pop1)[0]
             Pop_2 = np.where(~Bol_pop1)[0]
-            #print('Total coherently moving dots per group are', num_coh)
+            print('Total coherently moving dots per group are', num_coh)
             # indexes of coherently moving dots
             coh_ind = np.random.choice(Pop_1, int(num_coh[0]), replace = False)
             coh_ind = np.concatenate((coh_ind, np.random.choice(Pop_2, int(num_coh[1]), replace = False)))

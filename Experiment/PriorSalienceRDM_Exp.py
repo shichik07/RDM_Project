@@ -52,7 +52,11 @@ TaskInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
- 
+
+
+# Addition
+
+Info = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 #%% Set Stimuli
 
 # to keep track of time
@@ -107,7 +111,7 @@ def instruction_loop(instructions, *BlockIndex):
             else:
                 instruction_show(inst)
 
-def block_loop(trials):
+def block_loop(trials, expart):
     for trl_ind, trial_info in trials.iterrows():
         wrt.start()
         #PRESENT FIXATION
@@ -137,6 +141,7 @@ def block_loop(trials):
               'RT': None,
               'Exp': trial_info.Exp,
               'ColorSwitch': trial_info.ColorSwitch,
+              'Exp_Part': expart,
               'Late_Response': False}
             
         # create a fresh instance for the dots
@@ -151,6 +156,8 @@ def block_loop(trials):
                 clock.reset() # t0 for RT
                 event.clearEvents() # reset events
                 #send onset trigger
+            Info.text =   str(trial_info.Condition) + str(round(trial_info.Coherence_total, 3))
+            Info.draw()
             dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
             dot_stim.draw()
             # TaskInfo.text = 'Coh = ' + str(trial_info.Coherence_total)
@@ -253,7 +260,8 @@ TRIAL ={'Trial_nr': None ,
               'Exp':None,
               'ColorSwitch':None,
               'Date': inp.data[5],
-              'Late_Response':None}
+              'Late_Response':None,
+              'Exp_Part':None}
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 # start writing
@@ -280,7 +288,8 @@ if int(inp.data[4])%2 == 0:
     Experimental_Parts = Experimental_Parts[::-1]
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
-for exp in Experimental_Parts:
+for exp_ind, exp in enumerate(Experimental_Parts):
+    Exp_info = exp_ind +1 # index for experiment part 1 or part 2
     #exp = 'Exp_Part'
     # Start the Practice Session
     # Get the correct instructions
@@ -293,12 +302,12 @@ for exp in Experimental_Parts:
     for prac_idx, prac in enumerate(Practice):
         instruction_loop(prtc_inst[prac_idx]) #display the practice instructions
         Prtc_trials = lis.loc[(lis.Block == prac) & (lis.Exp == exp)] # Get practice trials
-        block_loop(Prtc_trials) #run practice
+        block_loop(Prtc_trials, Exp_info) #run practice
     Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
     instruction_loop(task_inst) # display the task instructions
     for blc_idx, block in enumerate(Task):
         trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
-        block_loop(trials) #run block
+        block_loop(trials, Exp_info) #run block
 instruction_show(END) # Finish Message
 win.close()
 core.quit()
