@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr  8 15:20:51 2021
+
+@author: jules
+"""
+#workaround get module path to system path (needs to be fixed)
+import sys
+
+sys.path.append(r'/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment')
+sys.path
+
+# Sample to write the task List
+from PriorPD.Task_func import item_struct as itm
+from params import * # import fixed parameter 
+
+
+
+# get class and variables
+bl_lists = itm.GetBlockList(DOT_G_COL)
+
+for i in range(10):
+    # generate the list
+    items = bl_lists.init_list()
+    
+    # randomize items per block
+    items = items.sample(frac=1)
+    items = items.sort_values(by=['Exp', 'Block'])
+    items = items.reset_index()
+    items = items.drop(['index'], axis = 1) # get rid of the extra index column
+    
+    # save files
+    group = 'Pilot'
+    
+    filename = r'/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/Lists/PriorRDM_' + group + 'List_' + str(i) +'.csv'
+    items.to_csv(filename, header=True)
