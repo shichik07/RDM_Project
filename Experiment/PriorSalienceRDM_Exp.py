@@ -13,8 +13,8 @@ randomization structure is inspired by...
 
 
 """
-import os
-os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
+# import os
+# os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
@@ -289,7 +289,7 @@ if int(inp.data[4])%2 == 0:
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
 for exp_ind, exp in enumerate(Experimental_Parts):
-    Exp_info = exp_ind +1 # index for experiment part 1 or part 2
+    Exp_info = exp_ind +1 # index for experiment part 1 or 2
     #exp = 'Exp_Part'
     # Start the Practice Session
     # Get the correct instructions
