@@ -16,6 +16,8 @@ randomization structure is inspired by...
 # import os
 # os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
 
+import informed_RDM
+
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
 import random
