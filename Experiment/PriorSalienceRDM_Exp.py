@@ -275,6 +275,8 @@ TRIAL ={'Trial_nr': None ,
               'ColorSwitch':None,
               'Date': inp.data[5],
               'Late_Response':None}
+
+
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 # start writing
@@ -297,8 +299,14 @@ win.flip()
 
 # start Block
 Experimental_Parts = lis.Exp.unique() # Get Both Experimental Parts
-if int(inp.data[4])%2 == 0:
-    Experimental_Parts = Experimental_Parts[::-1]
+try: # if we have no participant number restart
+    if int(inp.data[4])%2 == 0:
+        Experimental_Parts = Experimental_Parts[::-1]
+except ValueError:
+    print('Please indicate a participant number!')
+    win.close()
+    core.quit()
+    
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
 for exp in Experimental_Parts:
