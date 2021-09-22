@@ -227,6 +227,15 @@ def block_loop(trials, expart):
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
 
+# Participant number has to be included
+try:
+    if int(inp.data[4])%2 == 0:
+        pass
+except ValueError:
+    print('Please indicate a participant number!')
+    win.close()
+    core.quit()
+
 # Match Colors
 hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv)
 # get class and variables
