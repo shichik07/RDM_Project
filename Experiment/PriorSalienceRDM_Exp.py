@@ -8,8 +8,9 @@ Created on Tue March  5 11:20:31 2021
 For this Experiment I borrowed from the tutorial by Jonas K. Lindelov
 ('https://lindeloev.net/psychopy-course/past-courses/cml-seminar-2018/')
 and  Arkady Zgonnikov's implementation of a random dot kinematogram:
-"https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py". The trial 
-randomization structure is inspired by... 
+"https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py". For the 
+translation in angular degrees I used materials by Geoffrey Boynton:
+# http://www.mbfys.ru.nl/~robvdw/DGCN22/PRACTICUM_2011/LABS_2011/ALTERNATIVE_LABS/Lesson_2.html
 
 
 """
@@ -49,8 +50,6 @@ win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )
-
-TaskInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
@@ -158,12 +157,8 @@ def block_loop(trials, expart):
                 clock.reset() # t0 for RT
                 event.clearEvents() # reset events
                 #send onset trigger
-            Info.text =   str(trial_info.Condition) + str(round(trial_info.Coherence_total, 3))
-            Info.draw()
             dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
             dot_stim.draw()
-            # TaskInfo.text = 'Coh = ' + str(trial_info.Coherence_total)
-            # TaskInfo.draw()
             win.flip()
             keys = event.getKeys(timeStamped=clock)
             if keys != []:
@@ -275,17 +270,10 @@ TRIAL ={'Trial_nr': None ,
               'Exp_Part':None}
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+
+
 # start writing
 wrt = tw.task_writer(save_path, TRIAL)
-
-# Create Trial dictionary
-BaseInf =  {'Gender': inp.data[1],
-          'Group': inp.data[2],
-          'Age': inp.data[0],
-          'Handedness': inp.data[3],
-          'Part_Nr': inp.data[4],
-          'Date': inp.data[5]}
-
 
 # Initialize file
 wrt.set_file()

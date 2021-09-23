@@ -47,19 +47,3 @@ class task_writer():
         for item in trl_info.items():
             self.trial_dict[item[0]] = item[1]
         self.writer.writerow(self.trial_dict)
-        
-
-#%% Test
-    
-# save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
-# wrt = task_writer(save_path)
-# # Initialize file
-# wrt.set_file()
-
-# # Update file
-# new_dict = {'Condition': 'AB', 'Age':22}
-# wrt.update(new_dict)
-# wrt.finish()
-# wrt.start()
-# wrt.update(new_dict)
-# wrt.finish()

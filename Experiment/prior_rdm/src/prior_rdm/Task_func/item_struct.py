@@ -319,8 +319,3 @@ class GetBlockList():
             # if one of the two dot pops has to contain more info than the other
             coh_two = [[round(coherence*self.proportion[0],2), round(coherence*self.proportion[1],2)]]
         return coh_two
-#%% How to use
-
-# a = GetBlockList(DOT_G_COL) # Indicate Color Set
-# List = a.init_list() #create the list
-
