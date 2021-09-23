@@ -16,11 +16,15 @@ from prior_rdm.params import * # import fixed parameter
 
 
 class RDM_kinematogram(object):
-    """ Functions to implement a random dot kinematogram in Psychopy using the 
+    '''
+        Functions to implement a random dot kinematogram in Psychopy using the 
     elementarray function. Two algorithms are implemented. The Movshon-Newsome 
     algorithm and the Brownian-Motion algorithm for randomly moving dots with 
     different coherence levels. For a more thorough overview of advantages and 
-    disadvantages see Pilly and Seitz 2009"""
+    disadvantages see Pilly and Seitz 2009
+        ----------
+    '''
+    
     def __init__(self, 
                  alg=ALG, 
                  dot_speed = DOT_SPEED,  
@@ -31,7 +35,29 @@ class RDM_kinematogram(object):
                  rgbs = PRTC_FULL_COL, # just default, will not be shown
                  frameRate = REFRESH,
                  Jitter = JITTER_UPDATE):
+        
+        '''
+        Initilization of the dots with parameters of choice
+        ----------
+        
+        
+        Parameters
+        ----------
+        alg: string - BM for Browninan Motion or MN for Movshon-Newsome dot updating
+        dot_speed: float - Speed of dot motion in deg visual angle per frame
+        dot_density: float - Average number of dots on apperture
+        fieldsize: list - Size of squared apperture
+        center: list - Center coorodinates of apperture
+        groups: int - Number of groups - 1 or 2, actually only 2 works
+        rgbs: list - default stimulus colors - will not actually be shown
+        frameRate: int - monitor refreshrate
+        Jitter:  int - to increase task difficulty coherent motion is only updated randomly on every nth(Jitter trial)
+        
+        Returns
+        -------
+        '''
         """ Initialize with algorithm choice """
+        
         if alg != 'MN' and alg != 'BM':
             raise ValueError('The RDM algorithm you requested does not exist. '
                              'Please specify either "MN" for the Movshon-Newsome '
@@ -79,9 +105,23 @@ class RDM_kinematogram(object):
         self.Jitter = Jitter
         
     def create_dots(self):
-        ''' Outputs a matrix that contains information of each dot by column: 
+        '''
+        Outputs a matrix that contains information of each dot by column: 
         indices, population-membership, one column for each respective RGB value 
-        and x,y coordinates of each dot'''
+        and x,y coordinates of each dot
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+        Returns
+        -------
+        
+        colors.tolist(): list - list with the specific color to each individual dot
+        pos.tolist(): list - coordinates to every dot
+        
+        '''
        
         # first we create three sequences by creating a three dimensional array
         self.ind = np.arange(0,self.n_dot,1)
@@ -111,9 +151,24 @@ class RDM_kinematogram(object):
         return colors.tolist(), pos.tolist() 
     
     def update_dots(self, frame):
+        '''
+        Function to update the dot positions - randomly selecting dots of the 
+        target group to move coherently and the rest to reapear in random positions
+        ----------
         
-        """ Function to update the dot positions - randomly selecting dots of the 
-        target group to move coherently and the rest to reapear in random positions"""
+        
+        Parameters
+        ----------
+        
+        frame: int - frame number for the update - required for MN because only specific dots are updated at specific frames - ignored for BM
+        
+        Returns
+        -------
+        
+        colors.tolist(): list - list with the specific color to each individual dot
+        pos.tolist(): list - coordinates to every dot
+        
+        '''
         
         #quick fix for the BM -algorithm, which consitutes of only a single dot population
         if self.alg == 'BM':
@@ -168,9 +223,24 @@ class RDM_kinematogram(object):
 
     
     def exceed_bounds(self, coord):
-        '''function to determine if specific dots exceed the bounds of our aperture.
-        Returns indexes of dots that are in excess.
         '''
+        Function to determine if specific dots exceed the bounds of our aperture.
+        Returns indexes of dots that are in excess
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+        coord: list - coordinates to every dot being updated
+        
+        Returns
+        -------
+        
+        redraw: bol/list - returns False if dots do not exceed apperture, else a list of dots exceeding the apperture
+        
+        '''
+        
         if np.any((coord[:,0] < -self.bounds_x) | (coord[:,0] > self.bounds_x) 
                   | (coord[:,1] < -self.bounds_y) | (coord[:,1] > self.bounds_y), axis=0):
             # find row indices where bounds are exceeded for X coordinates
@@ -184,11 +254,24 @@ class RDM_kinematogram(object):
         return redraw
         
     def randomize_coord(self, x, axis):
-        # with this function we update noise dot locations randomly 
-        ''' Note to self: in the final implementation including the BM 
-        algorithm we need to distinguish here with updates of random speed
-        and random direction for the MN algorithm and only random direction
-        for the MN algorithm '''
+        '''
+        Find random coordinate within the bounds of the apperture 
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+         x: int - number of random draws/ dots to be updated
+         axis: int - do we need to update the x (==0) or y (==1) axis coordinates
+        
+        Returns
+        -------
+        
+        rand_loc: float - returns fresh random location within apperture bounds
+        
+        '''
+        
         if axis == 0: #name axis in case aperture isn't square or center is elsewhere
             ax = 0
         elif axis == 1:
@@ -197,8 +280,24 @@ class RDM_kinematogram(object):
         return rand_loc
     
     def get_coherent_dots(self, frame):
-        """ Function that randomly selects coherently moving dots for either one or 
-        two randomly moving dot populations"""
+        '''
+        Function that randomly selects coherently moving dots for either one or 
+        two randomly moving dot populations
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+        coh_ind: int - frame number for the update - required for MN because only specific dots are updated at specific frames - ignored for BM
+        
+        Returns
+        -------
+        
+        coh_ind: list - list of dot indexes to be updated coherently
+        
+        '''
+        
         if type(self.coherence) is float:
             update_jitter = random.randrange(self.Jitter)
             if update_jitter == (self.Jitter-1):
@@ -227,6 +326,22 @@ class RDM_kinematogram(object):
             raise ValueError('Please provide one or two coherence Values')
     
     def update_params(self, direction, color, coherence):
+        '''
+        Function to update class parameters for direction color and coherence. Done because we do not want to create a new RDM object class for every trial
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+        direction: str - coherent movement will be to the left or right
+        color: list - list with the specific color to each individual dot
+        coherence: list - percent of coherently moving dots in each dot color group
+        
+        Returns
+        -------
+        
+        '''
         self.rgbs = color
         self.coherence = coherence[0]
         if direction == 'left': # convert direction in degree
@@ -235,6 +350,25 @@ class RDM_kinematogram(object):
             self.direct = 90
             
     def bm_random_loc(self, start_x, start_y):
+        '''
+        Function to update noise dots if algorithm selected is BM. MV has random speed and direction, for BM speed is fixed. 
+        Hence we only randomlöy draw a direction in degrees, then update coordinates.
+        ----------
+        
+        
+        Parameters
+        ----------
+        
+        start_x: list - x coordinates of noise dots
+        start_y: list - y coordinates of noise dots
+        
+        
+        Returns
+        -------
+        
+        new_coord: updated coordinates to noise dots
+        
+        '''
         rdm_theta = np.random.rand(len(start_x)) *2*np.pi # random angle on a circle
         new_x = start_x + self.speed*np.cos(rdm_theta)/self.frameRate # "speed" is treated as the radius
         new_y = start_y + self.speed*np.sin(rdm_theta)/self.frameRate

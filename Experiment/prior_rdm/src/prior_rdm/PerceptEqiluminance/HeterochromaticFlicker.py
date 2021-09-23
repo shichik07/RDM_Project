@@ -19,6 +19,25 @@ from PriorPD.Task_func import item_struct as itm # generate Items
 
 
 def heterochromatic_flicker(win, colors):
+    '''
+    Function to create flicker photometry object to qualize color luminance for each participant psychophysically.
+    All parameters necessary are not listed here unfortunately. Can be found in the params file.
+    Sorry for the mess, but I had a hard time including objects from the psychopy experiment in a class (if I remember correctly).
+    
+    ---------
+        
+    Parameters
+    ----------
+        
+    win: obj - window object of the experiment
+    colors: list - list of colors to be matched in hsv color space
+        
+        
+    Returns
+    -------
+        
+    '''
+    
     # Flicker Photometry Objects
     ProgressInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 
