@@ -5,17 +5,14 @@ Created on Fri May 28 12:31:00 2021
 
 @author: jules
 """
-import os
-os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
-
 from psychopy.colors import Color
 from psychopy import core, visual, gui, event, data, monitors
 from psychopy.tools.colorspacetools import hsv2rgb, rgb2hsv
 import numpy as np
 import pandas as pd
 import random
-from params import * # import fixed parameter 
-from PriorPD.Task_func import item_struct as itm # generate Items
+from prior_rdm.params import * # import fixed parameter 
+from prior_rdm.Task_func import item_struct as itm # generate Items
 
 
 def heterochromatic_flicker(win, colors):
