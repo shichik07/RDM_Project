@@ -16,16 +16,16 @@ randomization structure is inspired by...
 # import os
 # os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
 
-import informed_RDM
+
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
 import random
-from PriorPD.Task_func import trial_writer as tw # import csv writer
-from PriorPD.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
-from params import * # import fixed parameter 
-from PriorPD.Task_func import item_struct as itm # generate Items
-from PriorPD.PerceptEqiluminance import HeterochromaticFlicker as flicker # luminance match function
+from prior_rdm.Task_func import trial_writer as tw # import csv writer
+from prior_rdm.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
+from prior_rdm.params import * # import fixed parameter 
+from prior_rdm.Task_func import item_struct as itm # generate Items
+from prior_rdm.PerceptEqiluminance import HeterochromaticFlicker as flicker # luminance match function
 
 #%% Instructions
 
