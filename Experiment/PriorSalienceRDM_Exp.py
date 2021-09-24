@@ -232,7 +232,7 @@ win.flip()
 
 # Participant number has to be included
 try:
-    if int(inp.data[4])%2 == 0:
+    if int(inp.data[4])%2 == 0: #this is fucking mega akward. But since we only deal numbers at present, I guess it is okay
         pass
 except ValueError:
     print('Please indicate a participant number!')
