@@ -111,6 +111,17 @@ TEXT_COL = [1,1,1]
 
 # INSTRUCTIONS PRACTICE
 
+INST_FLICKER = (
+    u'Bevor das Experiment beginnt müssen wir die in dem Experiment gezeigten Farben in ihrer Leuchtkraft anpassen.',
+    u'Um das zu erreichen, brauchen wir Ihre Unterstützung.',
+    u'Sie werden gleich die Darstellung eines flackernden Kreises sehen und daneben einen Balken.',
+    u'Der Balken gibt die relative Helligkeit in Prozent an.',
+    u'Mittels der Pfeiltasten "oben" und "unten" können Sie die Helligkeit anpassen.',
+    u'Bitte varieren Sie die Helligkeit so lange bis das Flackern des Kreises annähernd verschwindet.',
+    u'Sind sie zufrieden mit Ihrer Auswahl bestätigen Sie jeweils mit der Eingabe/Enter Taste.',
+    u'Es folgt die nächste Farbe (insgesamt dreimal), bevor im Anschluss das Experiment beginnt.',
+    u'Um zu Beginnen drücken Sie bitte die Leertaste.')
+
 INTRO = (
     u'Willkommen bei unserem Experiment.', 
     u'Ziel unseres Experiments ist es ein besseres Verständnis wie das Gehirn Entscheidungen trifft.',

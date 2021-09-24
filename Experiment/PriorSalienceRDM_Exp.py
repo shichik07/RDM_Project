@@ -50,6 +50,12 @@ win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )
+Continue = visual.TextStim(win=win, 
+                           color=TEXT_COL, 
+                           pos=(0.0, -7.0), 
+                           italic=True,
+                           height = 0.6)
+Continue.text = u'(Um Fortzufahren, drücken Sie bitte die Leertaste.)'
 
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
@@ -94,6 +100,7 @@ def instruction_show(text, *BlockIndex):
         text = text%BlockIndex
         Instruction.text = text
     Instruction.draw()
+    Continue.draw()
     win.flip()
     key = event.waitKeys()
     if key == QUIT_KEY:
@@ -221,6 +228,7 @@ def block_loop(trials, expart):
 
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
+win.flip() 
 
 # Participant number has to be included
 try:
@@ -232,6 +240,7 @@ except ValueError:
     core.quit()
 
 # Match Colors
+instruction_loop(INST_FLICKER)
 hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv)
 # get class and variables
 bl_lists = itm.GetBlockList(hsv_set)
