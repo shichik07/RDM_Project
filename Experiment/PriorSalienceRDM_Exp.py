@@ -8,21 +8,25 @@ Created on Tue March  5 11:20:31 2021
 For this Experiment I borrowed from the tutorial by Jonas K. Lindelov
 ('https://lindeloev.net/psychopy-course/past-courses/cml-seminar-2018/')
 and  Arkady Zgonnikov's implementation of a random dot kinematogram:
-"https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py". The trial 
-randomization structure is inspired by... 
+"https://github.com/cherepaha/Gamble_RDK/blob/master/ui/rdk_mn.py". For the 
+translation in angular degrees I used materials by Geoffrey Boynton:
+# http://www.mbfys.ru.nl/~robvdw/DGCN22/PRACTICUM_2011/LABS_2011/ALTERNATIVE_LABS/Lesson_2.html
 
 
 """
-import os
-os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
+# import os
+# os.chdir('/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development/RDM_Project/Experiment/')
+
+
 
 from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
 import random
-from PriorPD.Task_func import trial_writer as tw # import csv writer
-from PriorPD.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
-from params import * # import fixed parameter 
-from PriorPD.Task_func import item_struct as itm # generate Items
+from prior_rdm.Task_func import trial_writer as tw # import csv writer
+from prior_rdm.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
+from prior_rdm.params import * # import fixed parameter 
+from prior_rdm.Task_func import item_struct as itm # generate Items
+from prior_rdm.PerceptEqiluminance import HeterochromaticFlicker as flicker # luminance match function
 
 #%% Instructions
 
@@ -32,35 +36,34 @@ GUI_INP['dateStr'] = data.getDateStr()  # add the current time
 # Updates DIALOGUE with dialogue response
 inp  = gui.DlgFromDict(GUI_INP, title='Random Dot Motion Task',fixed=['dateStr'])
 
-# get class and variables
-bl_lists = itm.GetBlockList(DOT_G_COL)
 
 # Set Monitor
-
-my_monitor = monitors.Monitor(name='DellXPS15_screen')
-my_monitor.setSizePix(PIX_SIZE)
-my_monitor.setWidth(WIDTH)
-my_monitor.setDistance(DISTANCE)
-my_monitor.saveMon()
-
+my_monitor = MY_MONITOR
 
 win = visual.Window(size = PIX_SIZE,
     monitor = "DellXPS15_screen",
     units=UNITS,
     fullscr=True, # change to fullscreen later
-    color=BG_COLOR
+    color=BG_COLOR, 
 )
-
 win.mouseVisible = False
 
 #Instruction Window
 Instruction = visual.TextStim(win=win, color=TEXT_COL )
-
-TaskInfo = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
+Continue = visual.TextStim(win=win, 
+                           color=TEXT_COL, 
+                           pos=(0.0, -7.0), 
+                           italic=True,
+                           height = 0.6)
+Continue.text = u'(Um Fortzufahren, drücken Sie bitte die Leertaste.)'
 
 #Fixation cross
 fixation = visual.TextStim(win, text='+')
- 
+
+
+# Addition
+
+Info = visual.TextStim(win=win, color=TEXT_COL, pos=(10.0,0.0))
 #%% Set Stimuli
 
 # to keep track of time
@@ -75,7 +78,7 @@ color, coord= DOT_UPD.create_dots()
 dot_stim= visual.ElementArrayStim(
     win=win,
     units=UNITS,
-    colorSpace = 'rgb255',
+    colorSpace = 'hsv',#'rgb255',
     nElements=DOT_N,
     elementTex=None,
     elementMask="circle",
@@ -84,25 +87,6 @@ dot_stim= visual.ElementArrayStim(
     fieldSize = FIELD_SIZE,
     #fieldShape='circle',
     colors=color
-)
-
-# create the informative Cues
-grating =visual.GratingStim(
-    win=win,
-    units=UNITS,
-    size= GRATE_SIZE,
-    sf = (5.0/4.0),
-    mask = "circle",
-    contrast = GRATE_CONT
-    )
-
-# create the non-informative cue 
-circle = visual.Circle(
-    win=win,
-    units=UNITS,
-    radius= 2,
-    fillColor=CIRCLE_COL,
-    lineColor=CIRCLE_COL
 )
 
 
@@ -116,6 +100,7 @@ def instruction_show(text, *BlockIndex):
         text = text%BlockIndex
         Instruction.text = text
     Instruction.draw()
+    Continue.draw()
     win.flip()
     key = event.waitKeys()
     if key == QUIT_KEY:
@@ -134,7 +119,7 @@ def instruction_loop(instructions, *BlockIndex):
             else:
                 instruction_show(inst)
 
-def block_loop(trials):
+def block_loop(trials, expart):
     for trl_ind, trial_info in trials.iterrows():
         wrt.start()
         #PRESENT FIXATION
@@ -164,6 +149,7 @@ def block_loop(trials):
               'RT': None,
               'Exp': trial_info.Exp,
               'ColorSwitch': trial_info.ColorSwitch,
+              'Exp_Part': expart,
               'Late_Response': False}
             
         # create a fresh instance for the dots
@@ -180,8 +166,6 @@ def block_loop(trials):
                 #send onset trigger
             dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
             dot_stim.draw()
-            # TaskInfo.text = 'Coh = ' + str(trial_info.Coherence_total)
-            # TaskInfo.draw()
             win.flip()
             keys = event.getKeys(timeStamped=clock)
             if keys != []:
@@ -244,6 +228,23 @@ def block_loop(trials):
 
 Instruction.text = 'LADE DATEN ...'
 Instruction.draw()
+win.flip() 
+
+# Participant number has to be included
+try:
+    if int(inp.data[4])%2 == 0: #this is fucking mega akward. But since we only deal numbers at present, I guess it is okay
+        pass
+except ValueError:
+    print('Please indicate a participant number!')
+    win.close()
+    core.quit()
+
+# Match Colors
+instruction_loop(INST_FLICKER)
+hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv)
+# get class and variables
+bl_lists = itm.GetBlockList(hsv_set)
+
 # generate the list
 lis = bl_lists.init_list()
 # randomize items per block
@@ -274,22 +275,20 @@ TRIAL ={'Trial_nr': None ,
               'Exp':None,
               'ColorSwitch':None,
               'Date': inp.data[5],
+<<<<<<< HEAD
               'Late_Response':None}
 
 
+=======
+              'Late_Response':None,
+              'Exp_Part':None}
+>>>>>>> UpdateMod
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+
+
 # start writing
 wrt = tw.task_writer(save_path, TRIAL)
-
-# Create Trial dictionary
-BaseInf =  {'Gender': inp.data[1],
-          'Group': inp.data[2],
-          'Age': inp.data[0],
-          'Handedness': inp.data[3],
-          'Part_Nr': inp.data[4],
-          'Date': inp.data[5]}
-
 
 # Initialize file
 wrt.set_file()
@@ -309,7 +308,9 @@ except ValueError:
     
 Practice = lis.Block[(lis.Block.apply(lambda x: isinstance(x, str)))].unique() # Practice Blocks
 Task = lis.Block[(lis.Block.apply(lambda x: isinstance(x, int)))].unique()
-for exp in Experimental_Parts:
+instruction_loop(INTRO)
+for exp_ind, exp in enumerate(Experimental_Parts):
+    Exp_info = exp_ind +1 # index for experiment part 1 or 2
     #exp = 'Exp_Part'
     # Start the Practice Session
     # Get the correct instructions
@@ -322,12 +323,12 @@ for exp in Experimental_Parts:
     for prac_idx, prac in enumerate(Practice):
         instruction_loop(prtc_inst[prac_idx]) #display the practice instructions
         Prtc_trials = lis.loc[(lis.Block == prac) & (lis.Exp == exp)] # Get practice trials
-        block_loop(Prtc_trials) #run practice
+        block_loop(Prtc_trials, Exp_info) #run practice
     Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
     instruction_loop(task_inst) # display the task instructions
     for blc_idx, block in enumerate(Task):
         trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
-        block_loop(trials) #run block
+        block_loop(trials, Exp_info) #run block
 instruction_show(END) # Finish Message
 win.close()
 core.quit()

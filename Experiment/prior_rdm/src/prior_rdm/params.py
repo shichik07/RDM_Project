@@ -8,6 +8,7 @@ Created on Fri Apr  9 15:00:21 2021
 
 
 import numpy as np
+from psychopy import monitors,visual
 'Define Parameter for the Experiment'
 
 # DISPLAY PARAMS
@@ -29,8 +30,24 @@ CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
 JITTER_UPDATE = 2 # on which frames updates occur
 
+#FLICKERPHOTOMETRY PARAMS
+WIDTH_PHOTO = 0.5
+HEIGHT_PHOTO = 6.0
+BAR_POS = [5,0]
+RADIUS = 150
 
+# Experiment Objects
+MY_MONITOR = monitors.Monitor(name='DellXPS15_screen')
+MY_MONITOR.setSizePix(PIX_SIZE)
+MY_MONITOR.setWidth(WIDTH)
+MY_MONITOR.saveMon()
 
+# win = visual.Window(size = PIX_SIZE,
+#      monitor = "DellXPS15_screen",
+#      units=UNITS,
+#      fullscr=True, # change to fullscreen later
+#      color=BG_COLOR, 
+#  )
 
 #Number of dots
 if ALG == 'MN':
@@ -71,6 +88,7 @@ INTERSTIMI= [0.8,1.2]
 FRAMES = 120 # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
+COLOR_KEYS =['up','down']
 CONTINUE_KEYS = ['return', 'space']
 QUIT_KEY = ['escape']
 GUI_INP = {'ProbandenNr':'', 
@@ -93,15 +111,26 @@ TEXT_COL = [1,1,1]
 
 # INSTRUCTIONS PRACTICE
 
+INST_FLICKER = (
+    u'Bevor das Experiment beginnt müssen wir die in dem Experiment gezeigten Farben in ihrer Leuchtkraft anpassen.',
+    u'Um das zu erreichen, brauchen wir Ihre Unterstützung.',
+    u'Sie werden gleich die Darstellung eines flackernden Kreises sehen und daneben einen Balken.',
+    u'Der Balken gibt die relative Helligkeit in Prozent an.',
+    u'Mittels der Pfeiltasten "oben" und "unten" können Sie die Helligkeit anpassen.',
+    u'Bitte varieren Sie die Helligkeit so lange bis das Flackern des Kreises annähernd verschwindet.',
+    u'Sind sie zufrieden mit Ihrer Auswahl bestätigen Sie jeweils mit der Eingabe/Enter Taste.',
+    u'Es folgt die nächste Farbe (insgesamt dreimal), bevor im Anschluss das Experiment beginnt.',
+    u'Um zu Beginnen drücken Sie bitte die Leertaste.')
+
 INTRO = (
     u'Willkommen bei unserem Experiment.', 
     u'Ziel unseres Experiments ist es ein besseres Verständnis wie das Gehirn Entscheidungen trifft.',
-    u'Das Experiment besteht aus zwei Teilen, die jeweils ungefähr 20 Minuten in Anspruch nehmen.',
+    u'Das Experiment besteht aus zwei Teilen, die jeweils ungefähr 15 Minuten in Anspruch nehmen.',
     u'Ihre Aufgabe ist es in diesem Experiment einfache visuelle Entscheidungen treffen.',
     u'Dabei werden Sie sich scheinbar zufällig bewegende Punkte auf dem Bildschirm sehen.',
     u'Die Punkte können dabei unterschiedliche Farben haben (z.B. nur blau, oder grün und rot)',
     u'Sie müssen bestimmen ob sich diese Punkte insgesamt jeweils mehrheitlich nach Links oder nach Rechts bewegen.',
-    u'Dafür werden Sie die Punkte für ca. eine halbe Sekunde beobachten können und haben anschließend zwei Sekund um Ihre Antwort zu geben.',
+    u'Dafür werden Sie die Punkte für ca. drei Sekunden beobachten können und müssen in diesem Zeitraum Ihre Antwort geben.',
     u'In jedem der beiden Teile des Experiments kommt einer Farbe hierbei eine besondere Bedeutung zu, die Sie vorher lernen.',
     u'Um mit dem ersten Teil des Experiments zu beginnen, drücken Sie bitte die Leertaste.'
     )
@@ -120,7 +149,8 @@ PRACTICE_FULL_2 = (
     u'Punkte in grüner Farbe bewegen sich IMMER mehrheitlich in eine Richtung.',
     u'Bei allen anderen Farbkombinationen bewegen sich gleich viele Punkte in eine Richtung.',
     u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren.',
-    u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen.',
+    u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen Punkte.',
+    u'Sollten keine grüngefärbten Punkte gezeigt werden, geben Sie die Richtung an in die sich die Punkte mehrheitlich bewegen.', 
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die rechte Pfeiltaste.',
     u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
     
@@ -138,6 +168,8 @@ PRACTICE_PART_1 = (
     u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die blauen oder die roten Punkte mehrheitlich bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die rechte Pfeiltaste.',
     u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
+    u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',
+    u'Lassen Sie sich davon nicht beeinflussen und versuchen Sie in jedem Versuch intuitiv die Richtung der Bewegung zu schätzen.',
     u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
     
 PRACTICE_PART_2 = (
