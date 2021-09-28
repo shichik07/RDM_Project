@@ -176,7 +176,7 @@ class GetBlockList():
                         self.Practice.at[ind, 'Colors'] = self.Color[3]
                     else:
                         self.Practice.loc[ind, 'Block'] ='Practice_1'
-                        self.Practice.at[ind, 'Colors'] = self.Prtc_col # uni colored items for this practice
+                        self.Practice.at[ind, 'Colors'] = [self.Color[3][1], self.Color[3][1]] # uni colored items for this practice
                     ind += 1
         # second Part of the practice
         uninformative = self.Conditions[0:2]

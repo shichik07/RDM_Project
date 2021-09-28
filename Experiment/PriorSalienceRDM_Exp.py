@@ -275,14 +275,9 @@ TRIAL ={'Trial_nr': None ,
               'Exp':None,
               'ColorSwitch':None,
               'Date': inp.data[5],
-<<<<<<< HEAD
-              'Late_Response':None}
-
-
-=======
               'Late_Response':None,
               'Exp_Part':None}
->>>>>>> UpdateMod
+
 #set path
 save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 
