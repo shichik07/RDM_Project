@@ -66,11 +66,14 @@ PRTC_FULL_COL = [green, green]
 BASE_COL = blue # color against which other colors are compared
 LUM_METHOD = 'flicker' # Luminance matchin method, either "flicker" or 'min_mo' 
 
-
-green_hsv = [115, 0.6, 0.7]
-blue_hsv = [204, 0.68, 1]
-yellow_hsv = [46, 1, 0.83]
-red_hsv = [14, 0.68, 0.8]
+#green_hsv = [115, 0.6, 0.7]
+green_hsv = [109,0.64,0.58]
+#blue_hsv = [204, 0.68, 1]
+blue_hsv = [211,0.62,0.78]
+#yellow_hsv = [46, 1, 0.83]
+yellow_hsv = [42,0.87,0.66]
+#red_hsv = [14, 0.68, 0.8]
+red_hsv = [359,0.46,0.77]
 DOT_G_COL_hsv = [blue_hsv, blue_hsv], [blue_hsv, yellow_hsv], [blue_hsv, red_hsv], [blue_hsv, green_hsv]
 BASE_COL_hsv = blue_hsv
 
