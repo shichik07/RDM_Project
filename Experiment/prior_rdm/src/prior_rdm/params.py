@@ -5,7 +5,7 @@ Created on Fri Apr  9 15:00:21 2021
 
 @author: jules
 """
-
+#test
 
 import numpy as np
 from psychopy import monitors,visual
@@ -47,7 +47,7 @@ MY_MONITOR.saveMon()
 #      units=UNITS,
 #      fullscr=True, # change to fullscreen later
 #      color=BG_COLOR, 
-#  )
+#  ) 
 
 #Number of dots
 if ALG == 'MN':
