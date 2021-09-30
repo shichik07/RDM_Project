@@ -299,13 +299,9 @@ TRIAL ={'Trial_nr': None ,
               'Date': inp.data[5],
               'Late_Response':None,
               'Exp_Part':None}
-
-#set path
-save_path =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
-
-
+d
 # start writing
-wrt = tw.task_writer(save_path, TRIAL)
+wrt = tw.task_writer(SAVE_PATH, TRIAL)
 
 # Initialize file
 wrt.set_file()

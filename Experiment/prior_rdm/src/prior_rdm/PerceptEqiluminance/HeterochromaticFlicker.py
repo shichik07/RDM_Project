@@ -73,7 +73,7 @@ def heterochromatic_flicker(win, colors):
                 ProgressInfo.draw()
                 bar_adj.draw()
                 win.flip()
-                if count1%2 == 0:
+                if count1%UPDATE_FLICKER == 0:
                     circle.color = base_color
                 else:
                     circle.color = target_color
@@ -93,8 +93,9 @@ def heterochromatic_flicker(win, colors):
                         ColorFound = True
                         event.clearEvents()
                         print(target_color)
-    return colors      
+    return colors     
 
+    
             
 ## NOT IMPLEMENTED MINIMUM MOTION TECHNIQUE BASICS
 

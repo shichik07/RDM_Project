@@ -19,6 +19,8 @@ UNITS = 'deg'
 BG_COLOR = [-1,-1,-1]
 REFRESH = 61
 EEG_OPT = False
+SAVE_PATH =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+
 
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
@@ -36,11 +38,14 @@ WIDTH_PHOTO = 0.5
 HEIGHT_PHOTO = 6.0
 BAR_POS = [5,0]
 RADIUS = 150
+TARGET_FREQ = 25 #Hz
+UPDATE_FLICKER = int(np.ceil(REFRESH/TARGET_FREQ)) 
 
 # Experiment Objects
 MY_MONITOR = monitors.Monitor(name='DellXPS15_screen')
 MY_MONITOR.setSizePix(PIX_SIZE)
 MY_MONITOR.setWidth(WIDTH)
+MY_MONITOR.setDistance(DISTANCE)
 MY_MONITOR.saveMon()
 
 # win = visual.Window(size = PIX_SIZE,
@@ -89,7 +94,7 @@ CIRCLE_COL = [0, 0, 0]
 # TRIAL PARAMS
 TIME_TO_RESP = 1 # Time to respond after stimuli display - to catch slow responses eventually
 INTERSTIMI= [0.8,1.2]
-FRAMES = 120 # used to be 30 (0.5) seconds
+FRAMES = 2*REFRESH # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
 COLOR_KEYS =['up','down']
