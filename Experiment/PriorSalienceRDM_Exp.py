@@ -23,6 +23,7 @@ from psychopy import core, visual, gui, event, data, monitors
 import pandas as pd
 import random
 from prior_rdm.Task_func import trial_writer as tw # import csv writer
+from prior_rdm.Task_func import eeg_trigger as eeg # import csv writer
 from prior_rdm.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
 from prior_rdm.params import * # import fixed parameter 
 from prior_rdm.Task_func import item_struct as itm # generate Items
@@ -73,6 +74,12 @@ clock = core.Clock()
 DOT_UPD = ds.RDM_kinematogram(alg= ALG)
 
 color, coord= DOT_UPD.create_dots()
+
+# Get EEG trigger
+if EEG_OPT == True:
+    eeg_inter =eeg.eeg_com(conditions = EXP_CON, coherence_vals = COHERENCE)
+    # initialize port
+    eeg_inter.init_port()
 
 # create the dot stimuli 
 dot_stim= visual.ElementArrayStim(
@@ -128,6 +135,8 @@ def block_loop(trials, expart):
         
         fixation.draw()
         win.flip()
+        if EEG_OPT == True:
+            eeg_inter.fixation_trigger()
         ISI = core.StaticPeriod(screenHz=REFRESH)
         ISI.start(ISI_1)  # start a period of 0.5s
         ''' Here we could load a cue '''
@@ -164,6 +173,9 @@ def block_loop(trials, expart):
                 clock.reset() # t0 for RT
                 event.clearEvents() # reset events
                 #send onset trigger
+                if EEG_OPT == True:
+                    eeg_inter.onset_trigger(Condition = trial_info.Condition, 
+                                            Coherence = trial_info.Coherence_total)
             dot_stim.colors, dot_stim.xys = DOT_UPD.update_dots(frame)
             dot_stim.draw()
             win.flip()
@@ -178,6 +190,10 @@ def block_loop(trials, expart):
                     if keys[0][0] in RESPONSE_KEYS:
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]
+                        if EEG_OPT == True:
+                            eeg_inter.response_trigger(Condition = trial_info.Condition, 
+                                                    Coherence = trial_info.Coherence_total,
+                                                    Response = new_entries.Response)
                     elif keys[0][0] in NUMBER_KEYS:
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]
@@ -190,6 +206,10 @@ def block_loop(trials, expart):
         # in case our participants respond after the stimulus presentation
         if 'Resp_given' not in locals():
             Resp_time = core.getTime()
+            if EEG_OPT == True:
+                eeg_inter.response_trigger(Condition = trial_info.Condition, 
+                                        Coherence = trial_info.Coherence_total, 
+                                        Response = None)
             while (core.getTime() - Resp_time) < TIME_TO_RESP:
                 keys = event.getKeys(timeStamped=clock)
                 if keys != [] and condition == False:
@@ -318,12 +338,20 @@ for exp_ind, exp in enumerate(Experimental_Parts):
     for prac_idx, prac in enumerate(Practice):
         instruction_loop(prtc_inst[prac_idx]) #display the practice instructions
         Prtc_trials = lis.loc[(lis.Block == prac) & (lis.Exp == exp)] # Get practice trials
+        if EEG_OPT == True:
+            eeg_inter.practice_start_trigger()
         block_loop(Prtc_trials, Exp_info) #run practice
+        if EEG_OPT == True:
+            eeg_inter.practice_end_trigger()
     Exp_trials = lis.loc[(lis.Block != Practice[0]) & (lis.Block != Practice[1]) & (lis.Exp == exp)] # Get Task Trials
     instruction_loop(task_inst) # display the task instructions
     for blc_idx, block in enumerate(Task):
         trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
+        if EEG_OPT == True:
+            eeg_inter.block_start_trigger()
         block_loop(trials, Exp_info) #run block
+        if EEG_OPT == True:
+            eeg_inter.practice_end_trigger()
 instruction_show(END) # Finish Message
 win.close()
 core.quit()

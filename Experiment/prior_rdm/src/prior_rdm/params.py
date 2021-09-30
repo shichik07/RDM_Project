@@ -18,6 +18,7 @@ DISTANCE = 60
 UNITS = 'deg'
 BG_COLOR = [-1,-1,-1]
 REFRESH = 61
+EEG_OPT = False
 
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
