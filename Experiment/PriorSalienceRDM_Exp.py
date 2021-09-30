@@ -190,10 +190,12 @@ def block_loop(trials, expart):
                     if keys[0][0] in RESPONSE_KEYS:
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]
+                        if new_entries['Response'] == new_entries['Direction']: # doubled this here but anyways
+                            new_entries['Correct'] = 1
                         if EEG_OPT == True:
                             eeg_inter.response_trigger(Condition = trial_info.Condition, 
                                                     Coherence = trial_info.Coherence_total,
-                                                    Response = new_entries.Response)
+                                                    Response = new_entries.Correct)
                     elif keys[0][0] in NUMBER_KEYS:
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]

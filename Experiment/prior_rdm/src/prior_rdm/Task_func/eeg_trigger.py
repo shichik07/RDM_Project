@@ -349,7 +349,7 @@ class eeg_com():
         Coh_num = self.coh_list.index(Coherence) + 1 
         if Response:
             base = 100
-            if Response[0] == 'Incorrect':
+            if Response[0] == 0:
                 Coh_num = 4 + Coh_num
             elif Response[0] == None:
                 Coh_num = 9    
