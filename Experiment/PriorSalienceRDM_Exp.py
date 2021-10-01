@@ -166,6 +166,7 @@ def block_loop(trials, expart):
        
         ISI.complete()  # finish theevent.clearEvents()
         condition = False
+        Resp_given = False
         #PRESENT STIM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
         for frame in range(FRAMES):
             
@@ -206,9 +207,9 @@ def block_loop(trials, expart):
         win.flip()  
         
         # in case our participants respond after the stimulus presentation
-        if 'Resp_given' not in locals():
+        if Resp_given == False:
             Resp_time = core.getTime()
-            if EEG_OPT == True:
+            if EEG_OPT == True: # set this as a None Response First
                 eeg_inter.response_trigger(Condition = trial_info.Condition, 
                                         Coherence = trial_info.Coherence_total, 
                                         Response = None)
@@ -219,6 +220,10 @@ def block_loop(trials, expart):
                     if keys[0][0] in RESPONSE_KEYS:
                         new_entries['Response'], new_entries['RT'] = keys[0]
                         new_entries['Late_Response'] = True
+                        if EEG_OPT == True: # send a trigger if a response is recorded anyways - code it as late though
+                            eeg_inter.response_trigger(Condition = trial_info.Condition, 
+                                                    Coherence = trial_info.Coherence_total,
+                                                    Response = 'Late')
                         #break # break presentation loop early
                     elif keys[0][0] in NUMBER_KEYS:
                         new_entries['Response'], new_entries['RT'] = keys[0]
@@ -228,14 +233,12 @@ def block_loop(trials, expart):
                         wrt.finish()
                         win.close()
                         core.quit()
-        #Present Blank screen                
-        ISI.start(ISI_2) 
+        
         #Write Trial Information´
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
         wrt.update(new_entries)
         wrt.finish()
-        ISI.complete()
    
     # Display Instructions to indicate Block ended
     if trial_info.Block == 'Practice_1' or trial_info.Block == 'Practice_2':

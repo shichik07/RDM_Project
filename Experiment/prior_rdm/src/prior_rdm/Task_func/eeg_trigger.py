@@ -41,6 +41,13 @@ Mono_info_none: 139 - no resp
 Null_info_none: 149 - no resp
 Part_info_none: 159 - no resp
 Full_info_none: 169 - no resp
+
+# Late response by condition
+Mono_info_none: 130 - late resp
+Null_info_none: 140 - late resp
+Part_info_none: 150 - late resp
+Full_info_none: 160 - late resp
+
 """
 
 
@@ -353,6 +360,8 @@ class eeg_com():
                 Coh_num = 4 + Coh_num
             elif Response[0] == None:
                 Coh_num = 9    
+            elif Response[0] =='Late':
+                Coh_num = 0
         else:
             base = 0
         code = base + Con_num + Coh_num

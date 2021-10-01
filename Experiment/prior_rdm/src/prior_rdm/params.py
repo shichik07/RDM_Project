@@ -84,9 +84,8 @@ DOT_G_COL_hsv = [blue_hsv, blue_hsv], [blue_hsv, yellow_hsv], [blue_hsv, red_hsv
 BASE_COL_hsv = blue_hsv
 
 # TRIAL PARAMS
-TIME_TO_RESP = 1 # Time to respond after stimuli display - to catch slow responses eventually
+TIME_TO_RESP = 0.5 # Time to respond after stimuli display - to catch slow responses eventually
 INTERSTIMI= [0.8,1.2] # fixation duration
-ISI_2 = 0.5 # blank screen duration
 FRAMES = 2*REFRESH # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
