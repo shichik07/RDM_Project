@@ -88,7 +88,7 @@ class eeg_com():
         try:
             from ctypes import windll
             global io, parallel_port
-            io = windll.dlportio # requires dlportio.dll !!!
+            io = windll.inpoutx64 # requires inpoutx64 !!!
             parallel_port = self.port
         except:
             print('The parallel port couldn\'t be opened')
