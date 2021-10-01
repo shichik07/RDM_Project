@@ -74,7 +74,11 @@ def heterochromatic_flicker(win, colors):
                 bar_adj.draw()
                 win.flip()
                 if count1%UPDATE_FLICKER == 0:
-                    circle.color = base_color
+                    count2 += 1
+                    if count2%2 == 0:
+                        circle.color = base_color
+                    else:
+                        circle.color = target_color
                 else:
                     circle.color = target_color
                 if keys != []:
@@ -93,7 +97,7 @@ def heterochromatic_flicker(win, colors):
                         ColorFound = True
                         event.clearEvents()
                         print(target_color)
-    return colors     
+    return colors
 
     
             

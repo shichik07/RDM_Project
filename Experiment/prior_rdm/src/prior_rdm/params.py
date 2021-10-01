@@ -38,8 +38,8 @@ WIDTH_PHOTO = 0.5
 HEIGHT_PHOTO = 6.0
 BAR_POS = [5,0]
 RADIUS = 150
-TARGET_FREQ = 25 #Hz
-UPDATE_FLICKER = int(np.ceil(REFRESH/TARGET_FREQ)) 
+TARGET_FREQ = 30 #Hz
+UPDATE_FLICKER = int(round(REFRESH/TARGET_FREQ/2)) 
 
 # Experiment Objects
 MY_MONITOR = monitors.Monitor(name='DellXPS15_screen')

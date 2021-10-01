@@ -299,7 +299,7 @@ TRIAL ={'Trial_nr': None ,
               'Date': inp.data[5],
               'Late_Response':None,
               'Exp_Part':None}
-d
+
 # start writing
 wrt = tw.task_writer(SAVE_PATH, TRIAL)
 
