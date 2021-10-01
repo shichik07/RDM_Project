@@ -19,6 +19,7 @@ UNITS = 'deg'
 BG_COLOR = [-1,-1,-1]
 REFRESH = 61
 EEG_OPT = False
+PORT = 16344
 SAVE_PATH =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
 
 

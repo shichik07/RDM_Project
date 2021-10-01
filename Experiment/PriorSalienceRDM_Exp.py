@@ -77,7 +77,7 @@ color, coord= DOT_UPD.create_dots()
 
 # Get EEG trigger
 if EEG_OPT == True:
-    eeg_inter =eeg.eeg_com(conditions = EXP_CON, coherence_vals = COHERENCE)
+    eeg_inter =eeg.eeg_com(conditions = EXP_CON, coherence_vals = COHERENCE, port_adress = PORT)
     # initialize port
     eeg_inter.init_port()
 
