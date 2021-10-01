@@ -228,11 +228,14 @@ def block_loop(trials, expart):
                         wrt.finish()
                         win.close()
                         core.quit()
+        #Present Blank screen                
+        ISI.start(ISI_2) 
         #Write Trial Information´
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
         wrt.update(new_entries)
         wrt.finish()
+        ISI.complete()
    
     # Display Instructions to indicate Block ended
     if trial_info.Block == 'Practice_1' or trial_info.Block == 'Practice_2':

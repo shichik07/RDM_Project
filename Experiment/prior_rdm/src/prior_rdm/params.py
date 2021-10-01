@@ -83,17 +83,10 @@ red_hsv = [359,0.46,0.77]
 DOT_G_COL_hsv = [blue_hsv, blue_hsv], [blue_hsv, yellow_hsv], [blue_hsv, red_hsv], [blue_hsv, green_hsv]
 BASE_COL_hsv = blue_hsv
 
-# CUE PARAMS
-CUE_FRAMES = round(0.4*REFRESH)
-CUE_ORI =  [0.0,90.0]
-GRATE_SIZE = [4,4]
-GRATE_CONT = 1
-CIRCLE_COL = [0, 0, 0]
-
-
 # TRIAL PARAMS
 TIME_TO_RESP = 1 # Time to respond after stimuli display - to catch slow responses eventually
-INTERSTIMI= [0.8,1.2]
+INTERSTIMI= [0.8,1.2] # fixation duration
+ISI_2 = 0.5 # blank screen duration
 FRAMES = 2*REFRESH # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
