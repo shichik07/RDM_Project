@@ -351,7 +351,7 @@ class eeg_com():
         code: int - trigger code with trial information
         
         '''
-        
+        Coherence = round(Coherence, 2)
         Con_num = self.con_list.index(Condition)*10 + 30 
         Coh_num = self.coh_list.index(Coherence) + 1 
         if Response:
