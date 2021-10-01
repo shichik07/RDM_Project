@@ -195,7 +195,7 @@ def block_loop(trials, expart):
                         if EEG_OPT == True:
                             eeg_inter.response_trigger(Condition = trial_info.Condition, 
                                                     Coherence = trial_info.Coherence_total,
-                                                    Response = new_entries.Correct)
+                                                    Response = new_entries['Correct'])
                     elif keys[0][0] in NUMBER_KEYS:
                         condition = True
                         new_entries['Response'], new_entries['RT'] = keys[0]
