@@ -352,7 +352,7 @@ for exp_ind, exp in enumerate(Experimental_Parts):
     for blc_idx, block in enumerate(Task):
         trials = Exp_trials.loc[Exp_trials.Block == block] # get Block trials
         if EEG_OPT == True:
-            eeg_inter.block_start_trigger()
+            eeg_inter.block_start_trigger(blc_idx)
         block_loop(trials, Exp_info) #run block
         if EEG_OPT == True:
             eeg_inter.practice_end_trigger()
