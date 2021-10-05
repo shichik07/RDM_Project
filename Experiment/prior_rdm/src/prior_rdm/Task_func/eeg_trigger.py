@@ -164,7 +164,7 @@ class eeg_com():
         # start recording
         try: 
             io.DlPortWritePortUchar(self.port, 254)
-            print('Recording started')
+            print('Recording ended')
         except:
             print('Recording could not start')
         #self.sleep(2)
@@ -173,7 +173,7 @@ class eeg_com():
         # Block Trigger
         try:
             io.DlPortWritePortUchar(self.port, prac)
-            print(' Trigger number',  prac, ' : Block started')
+            print(' Trigger number',  prac, ' : Block ended')
         except:
             print('Failed to send trigger')
         #io.DlPortWritePortUchar(port, 0) # not sure why this is here?
@@ -251,7 +251,7 @@ class eeg_com():
         # Block Trigger
         try:
             io.DlPortWritePortUchar(self.port, block_nr)
-            print(' Trigger number', block_nr, ' : Block started')
+            print(' Trigger number', block_nr, ' : Block ended')
         except:
             print('Failed to send trigger')
         #io.DlPortWritePortUchar(port, 0) # not sure why this is here?
