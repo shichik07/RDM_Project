@@ -207,13 +207,14 @@ def block_loop(trials, expart):
         win.flip()  
         
         # in case our participants respond after the stimulus presentation
+        Resp_time = core.getTime()
         if Resp_given == False:
-            Resp_time = core.getTime()
             if EEG_OPT == True: # set this as a None Response First
                 eeg_inter.response_trigger(Condition = trial_info.Condition, 
                                         Coherence = trial_info.Coherence_total, 
                                         Response = None)
-            while (core.getTime() - Resp_time) < TIME_TO_RESP:
+        while (core.getTime() - Resp_time) < TIME_TO_RESP:
+            if Resp_given == False:
                 keys = event.getKeys(timeStamped=clock)
                 if keys != [] and condition == False:
                     condition = True
