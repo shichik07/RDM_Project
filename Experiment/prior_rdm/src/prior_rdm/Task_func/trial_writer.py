@@ -57,13 +57,13 @@ class task_writer():
             os.makedirs(data_dir)
     
         #create a text file to save data
-        self.fileName = data_dir + '/RDM_PD' + 'participant_' + self.trial_dict['Part_Nr']  + '.csv'
+        self.fileName = data_dir + '/RDM_' + self.trial_dict['Group'] +  '_participant_' + self.trial_dict['Part_Nr']  + '.csv'
         cnt = 0
 
         #Make sure we do not overwrite our data
         while os.path.exists(self.fileName):
             cnt += 1
-            self.fileName = data_dir + '/RDM_PD' +'participant_' + self.trial_dict['Part_Nr'] + '_v' + str(cnt) + '.csv'
+            self.fileName = data_dir + '/RDM_'   + self.trial_dict['Group']  + '_participant_' + self.trial_dict['Part_Nr'] + '_v' + str(cnt) + '.csv'
 
         # Get the Fieldnames
         self.fnames = list(self.trial_dict.keys()) 
