@@ -24,6 +24,7 @@ import pandas as pd
 import random
 from prior_rdm.Task_func import trial_writer as tw # import csv writer
 from prior_rdm.Task_func import eeg_trigger as eeg # import csv writer
+from prior_rdm.Task_func import pseudo as psd # import pseudonyms for part nr
 from prior_rdm.TwoDotRDM import dot_stimuli as ds # import 2 pop RDM version
 from prior_rdm.params import * # import fixed parameter 
 from prior_rdm.Task_func import item_struct as itm # generate Items
@@ -74,6 +75,13 @@ clock = core.Clock()
 DOT_UPD = ds.RDM_kinematogram(alg= ALG)
 
 color, coord= DOT_UPD.create_dots()
+
+# create pseudonyms for part nrs.
+pseudo = psd.pseudonym() # get class
+
+pseudo.create_csv_pseudo() # create list
+
+
 
 # Get EEG trigger
 if EEG_OPT == True:
@@ -282,6 +290,9 @@ lis = lis.sort_values(by=['Exp', 'Block'])
 lis = lis.reset_index()
 lis = lis.drop(['index'], axis = 1) # get rid of the extra index column
     
+# get pseudonym
+pseudo_part_nr = pseudo.get_pseudonym(index = int(inp.data[4]), con = inp.data[2])
+
 # Initialize data saving
 # Insert columns
 TRIAL ={'Trial_nr': None , 
@@ -299,7 +310,7 @@ TRIAL ={'Trial_nr': None ,
               'ISI': None,
               'Early_resp': None,
               'Handedness': inp.data[3],
-              'Part_Nr': inp.data[4],
+              'Part_Nr': pseudo_part_nr,
               'Coherence_total':None,
               'Exp':None,
               'ColorSwitch':None,

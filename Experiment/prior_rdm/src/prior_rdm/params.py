@@ -21,6 +21,8 @@ REFRESH = 61
 EEG_OPT = False
 PORT = 16344
 SAVE_PATH =  '/home/jules/Dropbox/PhD_Thesis/DecisionMakingAndLearningStudy/Experiment/Development' 
+RANDOMSEED = 1487
+LIST_MAX_NR = 100
 
 
 # DOT PARAMS
