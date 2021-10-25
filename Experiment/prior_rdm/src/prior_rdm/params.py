@@ -150,7 +150,7 @@ PRACTICE_FULL_1 = (
 PRACTICE_FULL_2 = (
     u'Sehr gut gemacht! Sie haben den zweiten Teil der Übung erreicht.', 
     u'In diesem Teil des Experiments sehen Sie Punkte in verschiedenen Farben.',
-    u'Punkte in grüner Farbe bewegen sich IMMER mehrheitlich in eine Richtung.',
+    u'Punkte in grüner Farbe bewegen sich FAST IMMER mehrheitlich in eine Richtung.',
     u'Bei allen anderen Farbkombinationen bewegen sich gleich viele Punkte in eine Richtung.',
     u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren.',
     u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen Punkte.',
