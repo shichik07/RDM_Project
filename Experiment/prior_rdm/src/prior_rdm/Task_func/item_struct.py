@@ -119,12 +119,10 @@ class GetBlockList():
                 if con == self.Conditions[0] or con == self.Conditions[1]:
                     con_in = self.Items.index[(self.Items['Condition'] == con) & (self.Items['Coherence_total'] == coh)] 
                     # Assort items to individual blocks and split between full and partially informative
-                    blocks = np.repeat(self.Block, [len(self.Block)], axis=0)
-                    random.shuffle((self.Block))
-                    self.Items.loc[con_in[0:int(self.Trial_Nr/2)], 'Block'] = np.hstack((blocks,np.array(self.Block)))
+                    blocks = np.repeat(self.Block, [self.Trial_Nr/len(self.Block)/2], axis=0)
+                    self.Items.loc[con_in[0:int(self.Trial_Nr/2)], 'Block'] = blocks
                     self.Items.loc[con_in[0:int(self.Trial_Nr/2)], 'Exp'] = 'Exp_Full' 
-                    random.shuffle((self.Block))
-                    self.Items.loc[con_in[int(self.Trial_Nr/2): self.Trial_Nr], 'Block'] = np.hstack((blocks,np.array(self.Block)))
+                    self.Items.loc[con_in[int(self.Trial_Nr/2): self.Trial_Nr], 'Block'] =  blocks
                     self.Items.loc[con_in[int(self.Trial_Nr/2): self.Trial_Nr], 'Exp'] = 'Exp_Part'
                 else:
                     blocks = np.repeat(self.Block, [int(self.Trial_Nr/len(self.Block))], axis=0)
@@ -261,14 +259,14 @@ class GetBlockList():
                     con_in = self.Items.index[(self.Items['Condition'] == con) & (self.Items['Coherence_total'] == coh) & (self.Items['Block'] == blck)] 
                     if con == self.Conditions[2]:
                         if blck%2 == 0:
-                            #switch colors index 0:5  and 5:9 so we make sure we have equal proportions left 
+                            #switch colors index 0:6  and 6:12 so we make sure we have equal proportions left 
                             # and right over the whole experiment
-                            self.Items.Colors.loc[con_in[0:5]] = self.Items.Colors.loc[con_in[0:5]].apply(lambda x: self.reverse_color(x))
-                            self.Items.ColorSwitch.loc[con_in[0:5]] = 'True' # not really true for partially informative but important
+                            self.Items.Colors.loc[con_in[0:6]] = self.Items.Colors.loc[con_in[0:5]].apply(lambda x: self.reverse_color(x))
+                            self.Items.ColorSwitch.loc[con_in[0:6]] = 'True' # not really true for partially informative but important
                         else:
-                            # and 5:9
-                            self.Items.Colors.loc[con_in[5:10]] = self.Items.Colors.loc[con_in[5:10]].apply(lambda x: self.reverse_color(x))
-                            self.Items.ColorSwitch.loc[con_in[5:10]] = 'True'
+                            # and 6:12
+                            self.Items.Colors.loc[con_in[6:12]] = self.Items.Colors.loc[con_in[5:10]].apply(lambda x: self.reverse_color(x))
+                            self.Items.ColorSwitch.loc[con_in[6:12]] = 'True'
                     else:
                         # switch colors for the first two indices only (80/20)
                         self.Items.Colors.loc[con_in[0:2]] = self.Items.Colors.loc[con_in[0:2]].apply(lambda x: self.reverse_color(x))

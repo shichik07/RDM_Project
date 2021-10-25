@@ -107,7 +107,7 @@ EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 BLOCK_NRS = [0,1,2,3]
 COHERENCE = [0.0, 4/30, 6/30, 10/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
 PROPORTION = [0.0, 2.0] #[0.2, 1.8]
-TASK_NR = 40 # defined with respect to each coherence level
+TASK_NR =48 # defined with respect to each coherence level
 PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
 
 # TEXT PARAMS
