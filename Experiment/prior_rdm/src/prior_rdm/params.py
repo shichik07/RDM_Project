@@ -140,7 +140,9 @@ INTRO = (
     )
 
 PRACTICE_FULL_1 = (
-    u'In diesem Teil des Experiments sehen Sie zunächst nur Punkte in einer Farbe die sich mehrheitlich in eine Richtung bewegen',
+    u'In diesem Teil des Experiments sehen Sie zunächst Punkte in blauer und grüner Farbe',
+    u'Nur grüngefärbte Punkte bewegt sich FAST IMMER mehrheitlich in eine Richtung.',
+    u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die grünen Punkte mehrheitlich bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
     u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
     u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',

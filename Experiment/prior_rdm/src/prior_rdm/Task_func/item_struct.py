@@ -167,14 +167,13 @@ class GetBlockList():
                     self.Practice.at[ind, 'Coherence'] = self.translate_coherence(con, coh)
                     self.Practice.loc[ind, 'Coherence_total'] = coh
                     self.Practice.loc[ind, 'Direction'] = self.Directions[ind%len(self.Directions)]
-                    
                     self.Practice.loc[ind, 'Exp']  = 'Exp_Full' 
                     if rep_idx >=8:
                         self.Practice.loc[ind, 'Block'] ='Practice_2'
                         self.Practice.at[ind, 'Colors'] = self.Color[3]
                     else:
                         self.Practice.loc[ind, 'Block'] ='Practice_1'
-                        self.Practice.at[ind, 'Colors'] = [self.Color[3][1], self.Color[3][1]] # uni colored items for this practice
+                        self.Practice.at[ind, 'Colors'] = self.Color[3] # uni colored items for this practice
                     ind += 1
         # second Part of the practice
         uninformative = self.Conditions[0:2]
