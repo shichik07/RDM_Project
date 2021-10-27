@@ -53,51 +53,51 @@ def heterochromatic_flicker(win, colors):
                             colorSpace = "hsv",
                             color= green_hsv)
     for comp in range(len(colors)-1):
-        bar_pos = [5,0] # introduce here so that we always start at 0
-        target_color = colors[comp + 1][1]
-        base_color = BASE_COL_hsv
-        ColorFound = False
-        count1 = 0
-        count2 = 0
-        event.clearEvents()
-        if LUM_METHOD == 'flicker':
-            while ColorFound == False:
-                keys = event.getKeys()
-                count1 +=1
-                circle.draw()
-                bar_outline.draw()
-                # move the progressbar
-                bar_adj.pos = bar_pos[0], target_color[2]*HEIGHT_PHOTO- HEIGHT_PHOTO/2
-                # Adjust Text
-                ProgressInfo.text = 'Helligkeit : ' + str(round(target_color.copy()[2]*100)) + '%'
-                ProgressInfo.draw()
-                bar_adj.draw()
-                win.flip()
-                if count1%UPDATE_FLICKER == 0:
-                    count2 += 1
-                    if count2%2 == 0:
-                        circle.color = base_color
-                    else:
-                        circle.color = target_color
-                else:
-                    circle.color = target_color
-                if keys != []:
-                    if keys[0] == COLOR_KEYS[0]:
-                        #if up has been pressed, increase brightness
-                        if target_color[2] < 1:
-                            target_color[2] += 0.01 
-                            event.clearEvents() # clear events
-                    elif keys[0] == COLOR_KEYS[1]:
-                        #if up has been pressed, decrease brightness
-                        if target_color[2] > 0:
-                            target_color[2] -= 0.01 
-                            event.clearEvents() # clear events
-                    elif keys[0] == CONTINUE_KEYS[0]:
-                        #target condition has been found, end loop
-                        ColorFound = True
-                        event.clearEvents()
-                        print(target_color)
+            bar_pos = [5,0] # introduce here so that we always start at 0
+            target_color = colors[comp + 1][1]
+            base_color = BASE_COL_hsv
+            ColorFound = False
+            count1 = 0
+            count2 = 0
+            event.clearEvents()
+            if LUM_METHOD == 'flicker':
+                while ColorFound == False:
+                    keys = event.getKeys()
+                    count1 +=1
+                    circle.draw()
+                    bar_outline.draw()
+                    # move the progressbar
+                    bar_adj.pos = bar_pos[0], target_color[2]*HEIGHT_PHOTO- HEIGHT_PHOTO/2
+                    # Adjust Text
+                    ProgressInfo.text = 'Helligkeit : ' + str(round(target_color.copy()[2]*100)) + '%'
+                    ProgressInfo.draw()
+                    bar_adj.draw()
+                    win.flip()
+                    if count1%UPDATE_FLICKER == 0:
+                        count2 += 1
+                        if count2%2 == 0:
+                            circle.color = base_color
+                        else:
+                            circle.color = target_color
+                    if keys != []:
+                        if keys[0] == COLOR_KEYS[0]:
+                            #if up has been pressed, increase brightness
+                            if target_color[2] < 1:
+                                target_color[2] += 0.01 
+                                event.clearEvents() # clear events
+                        elif keys[0] == COLOR_KEYS[1]:
+                            #if up has been pressed, decrease brightness
+                            if target_color[2] > 0:
+                                target_color[2] -= 0.01 
+                                event.clearEvents() # clear events
+                        elif keys[0] == CONTINUE_KEYS[0]:
+                            #target condition has been found, end loop
+                            ColorFound = True
+                            event.clearEvents()
+                            print(target_color)                         
     return colors
+
+
 
     
             
