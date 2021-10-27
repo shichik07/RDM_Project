@@ -260,11 +260,11 @@ class GetBlockList():
                         if blck%2 == 0:
                             #switch colors index 0:6  and 6:12 so we make sure we have equal proportions left 
                             # and right over the whole experiment
-                            self.Items.Colors.loc[con_in[0:6]] = self.Items.Colors.loc[con_in[0:5]].apply(lambda x: self.reverse_color(x))
+                            self.Items.Colors.loc[con_in[0:6]] = self.Items.Colors.loc[con_in[0:6]].apply(lambda x: self.reverse_color(x))
                             self.Items.ColorSwitch.loc[con_in[0:6]] = 'True' # not really true for partially informative but important
                         else:
                             # and 6:12
-                            self.Items.Colors.loc[con_in[6:12]] = self.Items.Colors.loc[con_in[5:10]].apply(lambda x: self.reverse_color(x))
+                            self.Items.Colors.loc[con_in[6:12]] = self.Items.Colors.loc[con_in[6:12]].apply(lambda x: self.reverse_color(x))
                             self.Items.ColorSwitch.loc[con_in[6:12]] = 'True'
                     else:
                         # switch colors for the first two indices only (80/20)
