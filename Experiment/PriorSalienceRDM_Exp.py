@@ -104,6 +104,12 @@ dot_stim= visual.ElementArrayStim(
     colors=color
 )
 
+# to keep track of trial indices
+def Index_tracker(max=1000):
+    n = 0
+    while n < max:
+        n += 1
+        yield n
 
 # Instruction presentation
 def instruction_show(text, *BlockIndex):
@@ -153,7 +159,7 @@ def block_loop(trials, expart):
                               color= trial_info.Colors, 
                               coherence = trial_info.Coherence)
         # Update Trial dictionary
-        new_entries =  {'Trial_nr': trl_ind, 
+        new_entries =  {'Trial_nr': next(Current_Index),
               'Condition': trial_info.Condition, 
               'Coherence': trial_info.Coherence,
               'Direction':  trial_info.Direction,
@@ -320,6 +326,9 @@ TRIAL ={'Trial_nr': None ,
 
 # start writing
 wrt = tw.task_writer(SAVE_PATH, TRIAL)
+
+# initialize index number generator
+Current_Index = Index_tracker()
 
 # Initialize file
 wrt.set_file()
