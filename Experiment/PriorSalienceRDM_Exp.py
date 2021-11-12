@@ -222,11 +222,6 @@ def block_loop(trials, expart):
         
         # in case our participants respond after the stimulus presentation
         Resp_time = core.getTime()
-        if Resp_given == False:
-            if EEG_OPT == True: # set this as a None Response First
-                eeg_inter.response_trigger(Condition = trial_info.Condition, 
-                                        Coherence = trial_info.Coherence_total, 
-                                        Response = None)
         while (core.getTime() - Resp_time) < TIME_TO_RESP:
             if Resp_given == False:
                 keys = event.getKeys(timeStamped=clock)
@@ -235,20 +230,21 @@ def block_loop(trials, expart):
                     if keys[0][0] in RESPONSE_KEYS:
                         new_entries['Response'], new_entries['RT'] = keys[0]
                         new_entries['Late_Response'] = True
+                        if new_entries['Response'] == new_entries['Direction']: # doubled this here but anyways
+                            new_entries['Correct'] = 1
                         if EEG_OPT == True: # send a trigger if a response is recorded anyways - code it as late though
                             eeg_inter.response_trigger(Condition = trial_info.Condition, 
                                                     Coherence = trial_info.Coherence_total,
-                                                    Response = 'Late')
-                        #break # break presentation loop early
-                    elif keys[0][0] in NUMBER_KEYS:
-                        new_entries['Response'], new_entries['RT'] = keys[0]
-                        new_entries['Late_Response'] = True
+                                                    Response = new_entries['Correct'])
+                        event.clearEvents()
+                        Resp_given = True
                 elif keys !=[]:
                     if keys[0][0] in QUIT_KEY:
                         wrt.finish()
                         win.close()
                         core.quit()
-        
+                        
+            
         #Write Trial Information´
         if new_entries['Response'] == new_entries['Direction']:
             new_entries['Correct'] = 1
@@ -285,6 +281,7 @@ except ValueError:
 # Match Colors
 instruction_loop(INST_FLICKER)
 hsv_set = flicker.heterochromatic_flicker(win, DOT_G_COL_hsv)
+win.flip()
 # get class and variables
 bl_lists = itm.GetBlockList(hsv_set)
 
@@ -312,6 +309,7 @@ TRIAL ={'Trial_nr': None ,
               'Age': inp.data[0],
               'Block': None,
               'RT': None,
+              'RT_Late': None, 
               'Colors': None,
               'ISI': None,
               'Early_resp': None,
