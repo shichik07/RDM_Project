@@ -28,13 +28,14 @@ LIST_MAX_NR = 100
 # DOT PARAMS
 FIELD_SIZE = 5.0 # Field size for the array object
 ALG =  'BM' #'MN'
-DOT_SPEED = 1.5 #used to be 8
+DOT_SPEED = 1 #used to be 8
 DOT_SIZE = 0.2
-DOT_DENSITY = 19.1 # initially tried with 16.7 as shadlen etc, but the higher refresh rate the larger the aperture size 
+DOT_DENSITY = 16.7 # initially tried with 16.7 as shadlen etc, but the higher refresh rate the larger the aperture size 
 FIELD_SIZE_DOT = [10.4, 10.4]  # #[14.8, 14.8] Field Size for the DOt Updates
 CENTER = [0,0]
 GROUP_NR = 2 #default, cannot be modified yet
 JITTER_UPDATE = 2 # on which frames updates occur
+DOT_N = 30
 
 #FLICKERPHOTOMETRY PARAMS
 WIDTH_PHOTO = 0.5
@@ -59,10 +60,10 @@ MY_MONITOR.saveMon()
 #  ) 
 
 #Number of dots
-if ALG == 'MN':
-    DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))/3 #workaround
-else:
-    DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))
+# if ALG == 'MN':
+#     DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))/3 #workaround
+# else:
+#     DOT_N = int(np.ceil(DOT_DENSITY*np.square(FIELD_SIZE_DOT [0])/REFRESH))
 
 # Colors of all dot Groups and luminance matching 
 green = [85,188,75]
@@ -93,7 +94,7 @@ FRAMES = 2*REFRESH # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
 COLOR_KEYS =['up','down']
-CONTINUE_KEYS = ['return', 'space']
+CONTINUE_KEYS = ['return', 'space', 'escape']
 QUIT_KEY = ['escape']
 GUI_INP = {'ProbandenNr':'', 
            'Geschlecht':['männlich','weiblich','divers'],

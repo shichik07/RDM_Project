@@ -34,7 +34,8 @@ class RDM_kinematogram(object):
                  groups = GROUP_NR, 
                  rgbs = PRTC_FULL_COL, # just default, will not be shown
                  frameRate = REFRESH,
-                 Jitter = JITTER_UPDATE):
+                 Jitter = JITTER_UPDATE,
+                 dot_number = DOT_N):
         
         '''
         Initilization of the dots with parameters of choice
@@ -66,19 +67,21 @@ class RDM_kinematogram(object):
         #fieldsize for now by default 14.8 degree for convenience so that we get 60 dots -
         # which is devisible by 6 (2 dot groups with three interlaced sequences)
         if groups == 2:
-            self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
-            if (self.n_dot%6) != 0:
-                raise ValueError('Because you want to display two distinct dot_populations'
-                                 ' with three distinct presentation sequences, the total'
-                                 ' number of dots must be divisible by 6.')
+            self.n_dot = dot_number
+            # self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
+            # if (self.n_dot%6) != 0:
+            #     raise ValueError('Because you want to display two distinct dot_populations'
+            #                      ' with three distinct presentation sequences, the total'
+            #                      ' number of dots must be divisible by 6.')
         elif groups == 1:
-            self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
-            if self.n_dot%6 != 0:
-                raise ValueError('Because you want to display one dot_population'
-                                 ' with three distinct presentation sequences, the total'
-                                 ' number of dots must be divisible by 6. 6?? Yes 6. Because '
-                                 'coherence is defined with respect to two dots. In order to'
-                                 ' make the results comparable.')
+            self.n_dot = dot_number
+            # self.n_dot = int(np.ceil(dot_density*np.square(fieldsize[0])/frameRate)) # number of dots
+            # if self.n_dot%6 != 0:
+            #     raise ValueError('Because you want to display one dot_population'
+            #                      ' with three distinct presentation sequences, the total'
+            #                      ' number of dots must be divisible by 6. 6?? Yes 6. Because '
+            #                      'coherence is defined with respect to two dots. In order to'
+            #                      ' make the results comparable.')
         else:
              raise ValueError('You must specify the groups parameter to the number of'
                               ' dot populations that you would like to display.' 
