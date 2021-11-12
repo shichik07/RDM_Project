@@ -123,7 +123,7 @@ def instruction_show(text, *BlockIndex):
     Instruction.draw()
     Continue.draw()
     win.flip()
-    key = event.waitKeys()
+    key = event.waitKeys(keyList=CONTINUE_KEYS)
     if key == QUIT_KEY:
          win.close()
          core.quit()
