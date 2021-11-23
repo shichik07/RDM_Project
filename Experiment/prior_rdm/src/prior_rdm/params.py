@@ -90,7 +90,7 @@ BASE_COL_hsv = blue_hsv
 # TRIAL PARAMS
 TIME_TO_RESP = 0.5 # Time to respond after stimuli display - to catch slow responses eventually
 INTERSTIMI= [0.8,1.2] # fixation duration
-FRAMES = 2*REFRESH # used to be 30 (0.5) seconds
+FRAMES = int(2.5*REFRESH) # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
 COLOR_KEYS =['up','down']
@@ -106,7 +106,8 @@ GUI_INP = {'ProbandenNr':'',
 # ITEM PARAMS 
 EXP_CON = ['Mono', 'Di_null', 'Di_part', 'Di_full']
 BLOCK_NRS = [0,1,2,3]
-COHERENCE = [0.0, 4/30, 6/30, 10/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
+BLOCK_NRS_SHORT = [0,1,2,3,4,5,6,7] # for the new short version
+COHERENCE = [0.0, 2/30, 4/30, 10/30]#[0.0, 2/30, 4/30, 0.3] # Note: we can use
 PROPORTION = [0.0, 2.0] #[0.2, 1.8]
 TASK_NR =48 # defined with respect to each coherence level
 PRACTICE_NR = 32 # defined with respect to each total tiral nr per practice part
@@ -145,7 +146,7 @@ PRACTICE_FULL_1 = (
     u'Nur grüngefärbte Punkte bewegt sich FAST IMMER mehrheitlich in eine Richtung.',
     u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die grünen Punkte mehrheitlich bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
-    u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
+    u'Bitte seien Sie so genau und so schnell wie möglich und antworten Sie innerhalb von 2.5 Sekunden.',
     u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',
     u'Lassen Sie sich davon nicht beeinflussen und versuchen Sie in jedem Versuch intuitiv die Richtung der Bewegung zu schätzen.',
     u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
@@ -166,7 +167,49 @@ EXP_FULL =(
     u'Vom Ablauf her ändert sich nichts.',
     u'Wenn Sie grüne Punkte sehen fokussieren Sie sich bitte wie bisher ausschließlich auf diese.',
     u'Bei allen anderen Farben/Farbkombinationen geben Sie wie bisher die mehrheitliche Richtung der Bewegung an.',
-    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.',
+    u'Um fortzufahren und mit dem Experiment zu beginnen, drücken Sie bitte die Leertaste.',
+    u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
+
+INTRO_SHORT = (
+    u'Willkommen bei unserem Experiment.', 
+    u'Ziel unseres Experiments ist es ein besseres Verständnis wie das Gehirn Entscheidungen trifft.',
+    u'Das Experiment wird insgesamt ungefähr 40 Minuten in Anspruch nehmen.',
+    u'Ihre Aufgabe ist es in diesem Experiment einfache visuelle Entscheidungen treffen.',
+    u'Dabei werden Sie sich scheinbar zufällig bewegende Punkte auf dem Bildschirm sehen.',
+    u'Die Punkte können dabei unterschiedliche Farben haben (z.B. blau, oder grün und rot)',
+    u'Sie müssen bestimmen ob sich diese Punkte insgesamt jeweils mehrheitlich nach Links oder nach Rechts bewegen.',
+    u'Dafür werden Sie die Punkte für ca. drei Sekunden beobachten können und müssen in diesem Zeitraum Ihre Antwort geben.',
+    u'In jedem der beiden Teile des Experiments kommt einer Farbe hierbei eine besondere Bedeutung zu, die Sie vorher lernen.',
+    u'Um mit dem ersten Teil des Experiments zu beginnen, drücken Sie bitte die Leertaste.'
+    )
+
+PRACTICE_FULL_1_SHORT = (
+    u'In diesem Teil des Experiments sehen Sie zunächst Punkte in blauer und grüner Farbe',
+    u'Nur grüngefärbte Punkte bewegt sich FAST IMMER mehrheitlich in eine Richtung.',
+    u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die grünen Punkte mehrheitlich bewegen',
+    u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
+    u'Bitte seien Sie so genau und so schnell wie möglich und antworten Sie innerhalb von 2.5 Sekunden.',
+    u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',
+    u'Lassen Sie sich davon nicht beeinflussen und versuchen Sie in jedem Versuch intuitiv die Richtung der Bewegung zu schätzen.',
+    u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
+    
+PRACTICE_FULL_2_SHORT = (
+    u'Sehr gut gemacht! Sie haben den zweiten Teil der Übung erreicht.', 
+    u'In diesem Teil des Experiments sehen Sie Punkte in verschiedenen Farben.',
+    u'Punkte in grüner Farbe bewegen sich FAST IMMER mehrheitlich in eine Richtung.',
+    u'Bei allen anderen Farbkombinationen bewegen sich gleich viele Punkte in eine Richtung.',
+    u'Um bestmöglich zu antworten ist es deshalb wichtig sich nur auf die grüngefärbten Punkte zu fokussieren.',
+    u'Das heißt, fokussieren Sie sich nur auf die grün gefärbten Punkte um Ihre Antwort zu geben und ignorieren Sie die anderen Punkte.',
+    u'Sollten keine grüngefärbten Punkte gezeigt werden, geben Sie die Richtung an in die sich die Punkte mehrheitlich bewegen.', 
+    u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die rechte Pfeiltaste.',
+    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
+    
+EXP_FULL_SHORT =(
+    u'Sehr gut gemacht! Im folgenden startet der erste von acht Experimentellen Blöcken.',
+    u'Vom Ablauf her ändert sich nichts.',
+    u'Wenn Sie grüne Punkte sehen fokussieren Sie sich bitte wie bisher ausschließlich auf diese.',
+    u'Bei allen anderen Farben/Farbkombinationen geben Sie wie bisher die mehrheitliche Richtung der Bewegung an.',
+    u'Um fortzufahren und mit dem Experiment zu beginnen, drücken Sie bitte die Leertaste.',
     u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
 
 PRACTICE_PART_1 = (
@@ -174,7 +217,7 @@ PRACTICE_PART_1 = (
     u'Nur eine der Farben bewegt sich mehrheitlich in eine Richtung.',
     u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die blauen oder die roten Punkte mehrheitlich bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die rechte Pfeiltaste.',
-    u'Bitte seien Sie so genau wie möglich und antworten Sie innerhalb von drei Sekunden.',
+    u'Bitte seien Sie so genau und so schnell wie möglich und antworten Sie innerhalb von 2.5 Sekunden.',
     u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',
     u'Lassen Sie sich davon nicht beeinflussen und versuchen Sie in jedem Versuch intuitiv die Richtung der Bewegung zu schätzen.',
     u'Um fortzufahren und den ersten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.')
@@ -191,7 +234,7 @@ EXP_PART =(
     u'Sehr gut gemacht! Im folgenden startet der erste von vier Experimentellen Blöcken.',
     u'Vom Ablauf her ändert sich nichts.',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
-    u'Um fortzufahren und den zweiten Übungsteil zu beginnen, drücken Sie bitte die Leertaste.',
+    u'Um fortzufahren und den dem dem Experiment zu beginnen, drücken Sie bitte die Leertaste.',
     u'ACHTUNG folgend beginnt automatisch der erste Aufgabenblock.')
 
 BLOCK_INSTR= (
@@ -209,3 +252,4 @@ EXP_END =(u'Sie haben diesen Teil des Experiments beendet. Drücken Sie bitte di
 
 PRACTICE_FULL = [PRACTICE_FULL_1, PRACTICE_FULL_2]
 PRACTICE_PART = [PRACTICE_PART_1, PRACTICE_PART_2]
+PRACTICE_FULL_SHORT = [PRACTICE_FULL_1_SHORT, PRACTICE_FULL_2_SHORT]
