@@ -189,7 +189,7 @@ PRACTICE_FULL_1_SHORT = (
     u'Nur grüngefärbte Punkte bewegt sich FAST IMMER mehrheitlich in eine Richtung.',
     u'Ihre Aufgabe ist es zu bestimmen in welche Richtung sich die grünen Punkte mehrheitlich bewegen',
     u'Wenn sich die Punkte mehrheitlich nach links bewegen, drücken Sie bitte die linke Pfeiltaste, andernfalls die Rechte Pfeiltaste.',
-    u'Für Ihre Antwort haben SIe insgesamt 2.5 Sekunden.',
+    u'Für Ihre Antwort haben Sie insgesamt 2.5 Sekunden.',
     u'Achtung! Die Aufgabe ist sehr schwierig zu beantworten und dazu konzipiert das Sie Fehler machen.',
     u'Lassen Sie sich davon nicht beeinflussen und versuchen Sie in jedem Versuch intuitiv die Richtung der Bewegung zu schätzen.',
     u'Bitte seien Sie bei Ihren Antworten so SCHNELL und so GENAU wie möglich.'
