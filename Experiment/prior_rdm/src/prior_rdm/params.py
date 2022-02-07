@@ -89,7 +89,7 @@ BASE_COL_hsv = blue_hsv
 
 # TRIAL PARAMS
 TIME_TO_RESP = 0.5 # Time to respond after stimuli display - to catch slow responses eventually
-INTERSTIMI= [0.8,1.2] # fixation duration
+INTERSTIMI= [1,1.4] # fixation duration
 FRAMES = int(2.5*REFRESH) # used to be 30 (0.5) seconds
 RESPONSE_KEYS = ['left', 'right']
 NUMBER_KEYS = ['1','2']
